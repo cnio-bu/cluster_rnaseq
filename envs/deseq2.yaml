@@ -1,0 +1,9 @@
+channels:
+  - r
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - bioconductor-deseq2
+  - bioconductor-apeglm
+  - r-arrow
