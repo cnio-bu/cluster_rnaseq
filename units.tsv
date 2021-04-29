@@ -1,9 +1,0 @@
-sample	unit	fq1	fq2
-CRE1078	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/1078-CRE.fastq	
-GFP1078	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/1078-GFP.fastq	
-CRE1803	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/1803-CRE.fastq	
-GFP1803	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/1803-GFP.fastq	
-CRE2365	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/2365-CRE.fastq	
-GFP2365	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/2365-GFP.fastq	
-CRE3562	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/3562-CRE.fastq	
-GFP3562	lane1	/localHDD/nextpresso/files_rna-seq-star-deseq2/FASTQ_unidos/3562-GFP.fastq	
