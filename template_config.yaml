@@ -1,6 +1,26 @@
-rules:
+# path or URL to sample sheet
+samples: samples.tsv
+# path or URL to sequencing unit sheet
+
+units: units.tsv
+
+parameters:
+    trimming:
+            adapter: ""
+            additional: ""
+
+resources:
     default:
-        res:
             threads: 1
-            mem_mb:  4096
+            mem:  4096
+            walltime: 10
+
+    trim_adapters_single_end:
+            threads: 1
+            mem:  4096
+            walltime: 10
+
+    trim_adapters_paired_end:
+            threads: 1
+            mem:  4096
             walltime: 10

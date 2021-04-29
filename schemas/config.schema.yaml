@@ -1,0 +1,57 @@
+$schema: "https://json-schema.org/draft-06/schema#"
+
+description: snakemake configuration file
+
+type: object
+
+properties:
+    samples:
+        type: string
+    units:
+        type: string
+    
+    parameters:
+        properties:
+            trimming:
+                type: object
+                properties:
+                    adapter:
+                        type: string
+                    additional:
+                        type: string
+    
+    resources:
+        properties:
+            default:
+                type: object
+                properties:
+                    threads:
+                        type: int
+                    mem:
+                        type: int
+                    walltime:
+                        type: int
+
+            trim_adapters_single_end:
+                type: object
+                properties:
+                    threads:
+                        type: int
+                    mem:
+                        type: int
+                    walltime:
+                        type: int
+
+            trim_adapters_paired_end:
+                type: object
+                properties:
+                    threads:
+                        type: int
+                    mem:
+                        type: int
+                    walltime:
+                        type: int
+
+required:
+    - samples
+    - units

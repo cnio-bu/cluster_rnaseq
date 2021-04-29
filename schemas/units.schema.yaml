@@ -1,0 +1,32 @@
+$schema: "https://json-schema.org/draft-06/schema#"
+
+description: each row of units.tsv represents a sequencing unit
+type: object
+properties:
+    sample:
+        type: string
+        description: sample name/identifier
+    unit:
+        type: string
+        description: unit id
+    index:
+        type: string
+        description: index id
+    fq1:
+        type: string
+        description: path to FASTQ file
+    fq2:
+        type: string
+        description: path to second FASTQ file (if exists)
+    strandedness:
+        type: string
+        description: can be '0', 'yes' or 'reverse' according to protocol strandedness
+    md5:
+        type: string
+        description: md5 hash code
+        pattern: "([a-fA-F\d]{32})"
+
+required:
+    - sample
+    - unit
+    - fq1
