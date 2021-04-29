@@ -1,0 +1,13 @@
+name: fgsea
+channels:
+  - r
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - r-matrix
+  - r-arrow=2.0.0
+  - bioconductor-fgsea
+
+
+

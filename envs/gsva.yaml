@@ -1,0 +1,11 @@
+name: gsva
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+dependencies:
+  - r-matrix
+  - r-arrow=2.0.0
+  - bioconductor-gseabase
+  - bioconductor-gsva
