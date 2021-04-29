@@ -1,8 +1,8 @@
 name: fgsea
 channels:
-  - r
   - conda-forge
   - bioconda
+  - r
   - defaults
 dependencies:
   - r-matrix
