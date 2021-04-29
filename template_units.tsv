@@ -1,5 +1,4 @@
-sample	unit	index	fq1	fq2	strandedness	md5
-A	lane1	1	A1.1.fq.gz	A1.2.fq.gz		
-A	lane1	2	A2.1.fq.gz	A2.2.fq.gz		
-B	lane1	1	B1.1.fq.gz	B1.2.fq.gz		
-
+sample	unit	lane	fq1	fq2	strandedness	md5
+A	rep1	1	A1.1.fq.gz	A1.2.fq.gz		
+A	rep1	2	A2.1.fq.gz	A2.2.fq.gz		
+B	rep1	1	B1.1.fq.gz	B1.2.fq.gz		
