@@ -1,1 +1,6 @@
-//STUB
+rules:
+    default:
+        res:
+            threads: 1
+            mem_mb:  4096
+            walltime: 10

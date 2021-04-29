@@ -1,3 +1,15 @@
+import glob
+import os
+import pandas as pd
+from snakemake.utils import min_version
+
+#### GLOBAL PARAMETERS ####
+
+min_version('6.2.1')
+
+configfile: "config.yaml"
+
+
 #### GLOBAL scope functions ####
 def get_resource(rule,resource) -> int:
 	'''

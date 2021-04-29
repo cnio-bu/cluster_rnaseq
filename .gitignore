@@ -1,0 +1,7 @@
+.snakemake
+.test/data
+log
+log.txt*
+units.tsv
+samples.tsv
+config.yaml
