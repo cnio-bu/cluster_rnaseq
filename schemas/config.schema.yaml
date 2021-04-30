@@ -9,6 +9,8 @@ properties:
         type: string
     units:
         type: string
+    outdir: 
+        type: string
     
     parameters:
         properties:

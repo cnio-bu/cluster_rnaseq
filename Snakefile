@@ -9,6 +9,7 @@ min_version('6.2.1')
 
 configfile: "config.yaml"
 
+OUTDIR = config['outdir']
 
 #### GLOBAL scope functions ####
 def get_resource(rule,resource) -> int:
@@ -19,10 +20,10 @@ def get_resource(rule,resource) -> int:
 	'''
 
 	try:
-		return config['rules'][rule]['res'][resource]
+		return config['resources'][rule][resource]
 	except KeyError: # TODO: LOG THIS
 		print(f'Failed to resolve resource for {rule}/{resource}: using default parameters')
-		return config["rules"]['default']['res'][resource]
+		return config["resources"]['default'][resource]
 
 #TODO: add defaults
 def get_params(rule,param) -> int:
@@ -31,7 +32,18 @@ def get_params(rule,param) -> int:
 	rule. It will crash otherwise.
 	''' 
 	try:
-		return config['rules'][rule]['params'][param]
+		return config['parameters'][rule][param]
 	except KeyError: # TODO: LOG THIS
 		print(f'Failed to resolve parameter for {rule}/{param}: Exiting...')
 		sys.exit(1)
+
+
+#### LOAD SAMPLES TABLES ###
+
+samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
+units   = pd.read_table(config["units"], dtype=str).set_index(["sample", "unit"], drop=False)
+units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
+
+
+#### Load rules ####
+include: 'rules/preprocess.smk'

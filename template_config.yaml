@@ -1,13 +1,15 @@
 # path or URL to sample sheet
 samples: samples.tsv
 # path or URL to sequencing unit sheet
-
 units: units.tsv
+
+# path to the results directory
+outdir: ''
 
 parameters:
     trimming:
-            adapter: ""
-            additional: ""
+            adapters: ""
+            extra: ""
 
 resources:
     default:
