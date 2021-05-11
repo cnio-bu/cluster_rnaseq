@@ -1,4 +1,4 @@
-$schema: "https://json-schema.org/draft-06/schema#"
+$schema: "http://json-schema.org/draft-07/schema#"
 
 description: snakemake configuration file
 
@@ -28,31 +28,31 @@ properties:
                 type: object
                 properties:
                     threads:
-                        type: int
+                        type: integer
                     mem:
-                        type: int
+                        type: integer
                     walltime:
-                        type: int
+                        type: integer
 
             trim_adapters_single_end:
                 type: object
                 properties:
                     threads:
-                        type: int
+                        type: integer
                     mem:
-                        type: int
+                        type: integer
                     walltime:
-                        type: int
+                        type: integer
 
             trim_adapters_paired_end:
                 type: object
                 properties:
                     threads:
-                        type: int
+                        type: integer
                     mem:
-                        type: int
+                        type: integer
                     walltime:
-                        type: int
+                        type: integer
 
 required:
     - samples

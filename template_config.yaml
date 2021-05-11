@@ -17,6 +17,11 @@ resources:
             mem:  4096
             walltime: 10
 
+    fastqc:
+            threads: 1
+            mem:  4096
+            walltime: 10
+
     trim_adapters_single_end:
             threads: 1
             mem:  4096

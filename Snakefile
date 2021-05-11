@@ -1,15 +1,18 @@
 import glob
 import os
 import pandas as pd
-from snakemake.utils import min_version
+import numpy as np
+from snakemake.utils import validate, min_version
 
 #### GLOBAL PARAMETERS ####
 
 min_version('6.2.1')
 
 configfile: "config.yaml"
+validate(config, schema="schemas/config.schema.yaml")
 
 OUTDIR = config['outdir']
+LOGDIR = config['logdir']
 
 #### GLOBAL scope functions ####
 def get_resource(rule,resource) -> int:
@@ -41,9 +44,13 @@ def get_params(rule,param) -> int:
 #### LOAD SAMPLES TABLES ###
 
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
-units   = pd.read_table(config["units"], dtype=str).set_index(["sample", "unit"], drop=False)
+validate(samples, schema="schemas/samples.schema.yaml")
+
+units = pd.read_table(config["units"], dtype=str).set_index(["sample", "unit","lane"], drop=False)
 units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
+validate(units, schema="schemas/units.schema.yaml")
 
 
 #### Load rules ####
+include: 'rules/qc.smk'
 include: 'rules/preprocess.smk'
