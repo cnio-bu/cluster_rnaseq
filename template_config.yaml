@@ -1,33 +1,78 @@
 # path or URL to sample sheet
 samples: samples.tsv
+
 # path or URL to sequencing unit sheet
 units: units.tsv
 
 # path to the results directory
 outdir: ''
 
+# path to the logs directory
+logs: ''
+
+# 0 = STAR, 1 = SALMON, 2 = HISAT2
+aligner: 1
+
+# genomic reference sequences and annotations for aligners and quantifiers
+ref:
+    star:
+        annotation: "/my/annotation.gtf"
+        # fasta file with transcripts
+        fasta: "/my/genome.fasta"
+        # STAR aligner index path (auto generated if not already present)
+        star_index: "/my/genome_idx"
+    salmon: 
+       # salmon transcriptome: .fa.gz
+        transcriptome: "/path/to/salmon/transcriptome"
+        # salmon genome assembly: .ga.gz
+        genome_assembly: "/path/to/salmon/genome_assembly"
+    hisat2:
+        # fasta file with transcripts
+        fasta: "/my/genome.fasta"
+        # HISAT2 aligner index path (auto generated if not already present)
+        hisat2_index: "/my/genome_idx"
+
+
 parameters:
     trimming:
-            adapters: ""
-            extra: ""
+        adapters: ""
+        extra: ""
+    
+    salmon_index:
+        gencode: False ## Set to True if transcriptome source is gencode
 
 resources:
     default:
-            threads: 1
-            mem:  4096
-            walltime: 10
-
+        threads: 1
+        mem:  4096
+        walltime: 10
+        
     fastqc:
-            threads: 1
-            mem:  4096
-            walltime: 10
+        threads: 1
+        mem:  4096
+        walltime: 10
 
     trim_adapters_single_end:
-            threads: 1
-            mem:  4096
-            walltime: 10
+        threads: 1
+        mem:  4096
+        walltime: 10
 
     trim_adapters_paired_end:
-            threads: 1
-            mem:  4096
-            walltime: 10
+        threads: 1
+        mem:  4096
+        walltime: 10
+
+    salmon_index:
+        threads: 32
+        mem: 64000
+        walltime: 30
+
+    star_index:
+        threads: 8
+        mem: 64000
+        walltime: 30
+
+    hisat2_index:
+        threads: 32
+        mem: 64000
+        walltime: 30

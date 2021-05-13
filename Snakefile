@@ -13,6 +13,7 @@ validate(config, schema="schemas/config.schema.yaml")
 
 OUTDIR = config['outdir']
 LOGDIR = config['logdir']
+IS_GENCODE = ('--gencode' if config['parameters']['salmon_index']['gencode'] else '')
 
 #### GLOBAL scope functions ####
 def get_resource(rule,resource) -> int:
@@ -54,3 +55,4 @@ validate(units, schema="schemas/units.schema.yaml")
 #### Load rules ####
 include: 'rules/qc.smk'
 include: 'rules/preprocess.smk'
+include: 'rules/index.smk'

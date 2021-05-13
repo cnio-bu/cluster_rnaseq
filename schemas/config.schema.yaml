@@ -11,7 +11,38 @@ properties:
         type: string
     outdir: 
         type: string
+    logdir: 
+        type: string
+    aligner:
+        type: integer
+
     
+    ref:
+        properties:
+            star:
+                type: object
+                properties:
+                    annotation:
+                        type: string
+                    fasta:
+                        type: string
+                    star_index:
+                        type: string
+            salmon:
+                type: object
+                properties:
+                    transcriptome:
+                        type: string
+                    genome_assembly:
+                        type: string
+            hisat2:
+                type: object
+                properties:
+                    fasta:
+                        type: string
+                    hisat2_index:
+                        type: string
+
     parameters:
         properties:
             trimming:
@@ -21,10 +52,25 @@ properties:
                         type: string
                     additional:
                         type: string
+            salmon_index:
+                type: object
+                properties:
+                    gencode:
+                        type: boolean
     
     resources:
         properties:
             default:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            fastqc:
                 type: object
                 properties:
                     threads:
@@ -45,6 +91,36 @@ properties:
                         type: integer
 
             trim_adapters_paired_end:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            salmon_index:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            star_index:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            hisat2_index:
                 type: object
                 properties:
                     threads:

@@ -5,3 +5,6 @@ log.txt*
 units.tsv
 samples.tsv
 config.yaml
+logs
+results
+test

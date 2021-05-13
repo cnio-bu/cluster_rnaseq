@@ -1,0 +1,11 @@
+name: aligners
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+dependencies:
+  - salmon
+
+
+
