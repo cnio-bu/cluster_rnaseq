@@ -13,18 +13,15 @@ def fastqc_output(units):
     return all_paths
 
 
-rule qc:
-    input:
-        f"{LOGDIR}/md5.checked",
-        fastqc_output(units)
-
-
 rule md5:
+    input:
+        units = config["units"]
     output:
         temp(touch(f"{LOGDIR}/md5.checked"))
     params:
-        units_df=units,
-        log_path=LOGDIR
+        logdir=LOGDIR
+    conda:
+        '../envs/md5.yaml'
     script:
         "../scripts/md5.py"
 
@@ -36,7 +33,8 @@ rule fastqc:
     output:
         html=f"{OUTDIR}/qc/fastqc/{{sample}}.{{unit}}.{{lane}}.fq{{read}}_fastqc.html",
         zip=f"{OUTDIR}/qc/fastqc/{{sample}}.{{unit}}.{{lane}}.fq{{read}}_fastqc.zip"
-    threads: get_resource("fastqc","threads")
+    threads: 
+        get_resource("fastqc","threads")
     resources:
         mem=get_resource("fastqc","mem"),
         walltime=get_resource("fastqc","walltime")
