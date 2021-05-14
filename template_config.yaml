@@ -8,7 +8,7 @@ units: units.tsv
 outdir: ''
 
 # path to the logs directory
-logs: ''
+logdir: ''
 
 # 0 = STAR, 1 = SALMON, 2 = HISAT2
 aligner: 1
@@ -65,7 +65,7 @@ resources:
     salmon_index:
         threads: 32
         mem: 64000
-        walltime: 30
+        walltime: 60
 
     star_index:
         threads: 8
