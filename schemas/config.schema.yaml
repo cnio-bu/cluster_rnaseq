@@ -57,6 +57,8 @@ properties:
                 properties:
                     gencode:
                         type: boolean
+            multiqc:
+                type: string
     
     resources:
         properties:
@@ -71,6 +73,16 @@ properties:
                         type: integer
 
             fastqc:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+    
+            multiqc:
                 type: object
                 properties:
                     threads:

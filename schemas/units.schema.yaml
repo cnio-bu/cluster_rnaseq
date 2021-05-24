@@ -8,10 +8,7 @@ properties:
     sample:
         type: string
         description: sample name/identifier
-    unit:
-        type: string
-        description: unit id
-    index:
+    lane:
         type: string
         description: index id
     fq1:
@@ -34,5 +31,4 @@ properties:
 
 required:
     - sample
-    - unit
     - fq1

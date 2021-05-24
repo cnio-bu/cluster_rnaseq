@@ -40,6 +40,9 @@ parameters:
     
     salmon_index:
         gencode: False ## Set to True if transcriptome source is gencode
+    
+    multiqc: "--config res/config/multiqc_config.yaml"
+
 
 resources:
     default:
@@ -48,6 +51,11 @@ resources:
         walltime: 10
         
     fastqc:
+        threads: 1
+        mem:  4096
+        walltime: 10
+        
+    multiqc:
         threads: 1
         mem:  4096
         walltime: 10

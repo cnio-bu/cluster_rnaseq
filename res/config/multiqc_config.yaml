@@ -1,0 +1,12 @@
+custom_logo: 'res/img/Logo_BU.png'
+custom_logo_url: 'https://bioinformatics.cnio.es/'
+custom_logo_title: 'CNIO Bioinformatics Unit'
+
+title: "CNIO Bioinformatics Unit RNA-seq QC."
+subtitle: ""
+intro_text: ""
+report_comment: ""
+
+report_header_info:
+    - Contact E-mail: 'bioinformatica@cnio.es'
+    - Application Type: 'RNA-seq'

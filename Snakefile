@@ -47,7 +47,7 @@ def get_params(rule,param) -> int:
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
 validate(samples, schema="schemas/samples.schema.yaml")
 
-units = pd.read_table(config["units"], dtype=str).set_index(["sample", "unit","lane"], drop=False)
+units = pd.read_table(config["units"], dtype=str).set_index(["sample", "lane"], drop=False)
 units.index = units.index.set_levels([i.astype(str) for i in units.index.levels])  # enforce str in index
 validate(units, schema="schemas/units.schema.yaml")
 
@@ -56,3 +56,9 @@ validate(units, schema="schemas/units.schema.yaml")
 include: 'rules/qc.smk'
 include: 'rules/preprocess.smk'
 include: 'rules/index.smk'
+
+
+#### Rule all ####
+rule all:
+    input:
+        rules.multiqc.output
