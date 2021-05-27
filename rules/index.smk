@@ -4,7 +4,7 @@ rule generate_decoy_sequences:
     input:
         genome=config['ref']['salmon']['genome_assembly']
     output:
-        decoys=OUTDIR + "/index/decoys.txt"
+        decoys=config["ref"]["star"]["star_index"]+"/decoys.txt"
     resources:
         walltime=1
     shell: 
@@ -19,7 +19,7 @@ rule build_gentrome:
         genome=config['ref']['salmon']['genome_assembly'],
         transcriptome=config['ref']['salmon']['transcriptome']
     output:
-        gentrome=OUTDIR + "/index/gentrome.fa.gz"
+        gentrome=config["ref"]["star"]["star_index"]+"/gentrome.fa.gz"
     resources:
         walltime=1
     shell:
@@ -31,7 +31,7 @@ rule salmon_index:
         gentrome=rules.build_gentrome.output.gentrome,
         decoys=rules.generate_decoy_sequences.output.decoys
     output:
-        directory(OUTDIR + '/index/salmon_index')
+        directory(config["ref"]["salmon"]["salmon_index"])
     threads:
         get_resource('salmon_index', 'threads')
     resources:
@@ -48,7 +48,8 @@ rule salmon_index:
 ## STAR RULES
 rule star_index:
     input:
-        fasta = config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-"
+        fasta = config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-",
+        gtf   = config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-"
     output:
         directory(config["ref"]["star"]["star_index"])
     threads: 
@@ -76,7 +77,7 @@ rule hisat2_index:
         mem=get_resource("hisat2_index", "mem"),
         walltime=get_resource("hisat2_index", "walltime")
     params:
-        prefix=""
+        prefix=config["ref"]["hisat2"]["hisat2_index"] + "/hisat2_index"
     log:
         f"{LOGDIR}/hisat2_index/index.log"
     wrapper:

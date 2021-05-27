@@ -26,6 +26,8 @@ ref:
         transcriptome: "/path/to/salmon/transcriptome"
         # salmon genome assembly: .ga.gz
         genome_assembly: "/path/to/salmon/genome_assembly"
+        # Salmon aligner index path (auto generated if not already present)
+        salmon_index: "/my/genome_idx"
     hisat2:
         # fasta file with transcripts
         fasta: "/my/genome.fasta"
@@ -78,9 +80,9 @@ resources:
     star_index:
         threads: 8
         mem: 64000
-        walltime: 30
+        walltime: 120
 
     hisat2_index:
         threads: 32
         mem: 64000
-        walltime: 30
+        walltime: 120

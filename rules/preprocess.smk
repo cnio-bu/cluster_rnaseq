@@ -60,7 +60,7 @@ rule trim_adapters_single_end:
         mem=get_resource('trim_adapters_single_end', 'mem'),
         walltime=get_resource('trim_adapters_single_end', 'walltime')
     params:
-        adapters=f"-a {{get_params(trimming,'adapters')}}",
+        adapters="-a {}".format(get_params("trimming","adapter")),
         extra=get_params('trimming', 'extra')
     log:
         "logs/trim_adapters_single_end/{sample}.log",
@@ -76,12 +76,12 @@ rule trim_adapters_paired_end:
         fastq2=OUTDIR + "/trimmed/{sample}_R2.fastq.gz",
         qc=OUTDIR + "/qc/trimming/{sample}.qc.txt"
     threads:
-        get_resource('trim_adapters_single_end', 'threads')
+        get_resource('trim_adapters_paired_end', 'threads')
     resources:
-        mem=get_resource('trim_adapters_single_end', 'mem'),
-        walltime=get_resource('trim_adapters_single_end', 'walltime')
+        mem=get_resource('trim_adapters_paired_end', 'mem'),
+        walltime=get_resource('trim_adapters_paired_end', 'walltime')
     params:
-        adapters=f"-a {{get_params(trimming,'adapters')}}",
+        adapters="-a {}".format(get_params("trimming","adapter")),
         extra=get_params('trimming', 'extra')
     log:
         "logs/trim_adapters_paired_end/{sample}.log",
