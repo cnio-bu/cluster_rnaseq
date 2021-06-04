@@ -4,7 +4,7 @@ rule generate_decoy_sequences:
     input:
         genome=config['ref']['salmon']['genome_assembly']
     output:
-        decoys=config["ref"]["star"]["star_index"]+"/decoys.txt"
+        decoys="/".join(config["ref"]["salmon"]["salmon_index"].split('/')[:-1])+"/decoys.txt"
     resources:
         walltime=1
     shell: 
@@ -19,7 +19,7 @@ rule build_gentrome:
         genome=config['ref']['salmon']['genome_assembly'],
         transcriptome=config['ref']['salmon']['transcriptome']
     output:
-        gentrome=config["ref"]["star"]["star_index"]+"/gentrome.fa.gz"
+        gentrome="/".join(config["ref"]["salmon"]["salmon_index"].split('/')[:-1])+"/gentrome.fa.gz"
     resources:
         walltime=1
     shell:

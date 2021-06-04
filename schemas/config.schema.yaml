@@ -42,6 +42,8 @@ properties:
                         type: string
                     hisat2_index:
                         type: string
+                    annotation:
+                        type: string
 
     parameters:
         properties:
@@ -51,6 +53,11 @@ properties:
                     adapter:
                         type: string
                     additional:
+                        type: string
+            salmon:
+                type: object
+                properties:
+                    libtype:
                         type: string
             salmon_index:
                 type: object
@@ -110,8 +117,58 @@ properties:
                     mem:
                         type: integer
                     walltime:
+                        type: integer  
+                                  
+            salmon_quant:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
                         type: integer
             
+            star_align:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            hisat2_align:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            hisat2_sort:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            htseq_count:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+               
             salmon_index:
                 type: object
                 properties:

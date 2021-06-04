@@ -1,15 +1,6 @@
 ## Let snakemake use paired reads whenever possible
 ruleorder: trim_adapters_paired_end > trim_adapters_single_end
 
-
-def is_single_end(sample):
-    return pd.isnull(units.loc[sample, 'fq2']).all()
-
-
-def is_multi_lane(sample):
-    return not pd.isnull(units.loc[sample, 'lane']).all()
-
-
 def get_single_raw_fastq(wildcards):
 
     if is_multi_lane(wildcards.sample):
@@ -63,7 +54,7 @@ rule trim_adapters_single_end:
         adapters="-a {}".format(get_params("trimming","adapter")),
         extra=get_params('trimming', 'extra')
     log:
-        "logs/trim_adapters_single_end/{sample}.log",
+        f"{LOGDIR}/trim_adapters_single_end/{{sample}}.log",
     wrapper:
         '0.74.0/bio/cutadapt/se'
 
@@ -84,6 +75,6 @@ rule trim_adapters_paired_end:
         adapters="-a {}".format(get_params("trimming","adapter")),
         extra=get_params('trimming', 'extra')
     log:
-        "logs/trim_adapters_paired_end/{sample}.log",
+        f"{LOGDIR}/trim_adapters_paired_end/{{sample}}.log",
     wrapper:
         '0.74.0/bio/cutadapt/pe'

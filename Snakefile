@@ -53,11 +53,18 @@ validate(units, schema="schemas/units.schema.yaml")
 
 
 #### Load rules ####
+include: 'rules/common.smk'
 include: 'rules/qc.smk'
 include: 'rules/preprocess.smk'
 include: 'rules/index.smk'
+include: 'rules/align.smk'
+
 
 rule all:
 	input:
 		f"{OUTDIR}/qc/multiqc_report.html",
-		expand(f'{OUTDIR}/trimmed/{{sample}}_R1.fastq.gz', sample=samples['sample'])
+		#f"{OUTDIR}/qc_concat/multiqc_report.html",
+		#expand(f'{OUTDIR}/trimmed/{{sample}}_R1.fastq.gz', sample=samples['sample']),
+		#expand(f'{OUTDIR}/mapped/star/{{sample}}/Aligned.sortedByCoord.out.bam', sample=samples['sample']),
+		expand(f'{OUTDIR}/mapped/hisat2/{{sample}}_sorted.bam', sample=samples['sample'])
+		#expand(f'{OUTDIR}/quant/salmon/{{sample}}/', sample=samples['sample'])

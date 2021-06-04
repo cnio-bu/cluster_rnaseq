@@ -33,10 +33,17 @@ ref:
         fasta: "/my/genome.fasta"
         # HISAT2 aligner index path (auto generated if not already present)
         hisat2_index: "/my/genome_idx"
+        annotation: "/my/annotation.gtf"
 
 
 parameters:
     trimming:
+            adapters: ""
+            extra: ""
+    ## set it to A for automatic library detection.
+    ## https://salmon.readthedocs.io/en/latest/salmon.html
+    salmon:
+        libtype: 'A'
         adapters: ""
         extra: ""
     
@@ -66,11 +73,36 @@ resources:
         threads: 1
         mem:  4096
         walltime: 10
-
+        
     trim_adapters_paired_end:
-        threads: 1
+            threads: 1
+            mem:  4096
+            walltime: 10
+ 
+    salmon_quant:
+            threads: 20
+            mem: 32000
+            walltime: 10
+
+    star_align:
+            threads: 8
+            mem: 64000
+            walltime: 60
+
+    hisat2_align:
+            threads: 8
+            mem: 64000
+            walltime: 60
+    
+    hisat2_sort:
+        threads: 8
         mem:  4096
         walltime: 10
+                
+    htseq_count:
+            threads: 8
+            mem: 64000
+            walltime: 60
 
     salmon_index:
         threads: 32
