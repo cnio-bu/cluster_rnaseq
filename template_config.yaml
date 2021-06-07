@@ -11,7 +11,7 @@ outdir: ''
 logdir: ''
 
 # 0 = STAR, 1 = SALMON, 2 = HISAT2
-aligner: 1
+aligner: 0
 
 # genomic reference sequences and annotations for aligners and quantifiers
 ref:
@@ -98,11 +98,6 @@ resources:
         threads: 8
         mem:  4096
         walltime: 10
-                
-    htseq_count:
-            threads: 8
-            mem: 64000
-            walltime: 60
 
     salmon_index:
         threads: 32

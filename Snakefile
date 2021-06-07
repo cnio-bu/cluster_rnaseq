@@ -63,7 +63,7 @@ include: 'rules/align.smk'
 rule all:
 	input:
 		f"{OUTDIR}/qc/multiqc_report.html",
-		#f"{OUTDIR}/qc_concat/multiqc_report.html",
+		f"{OUTDIR}/qc_concat/multiqc_report.html",
 		#expand(f'{OUTDIR}/trimmed/{{sample}}_R1.fastq.gz', sample=samples['sample']),
 		#expand(f'{OUTDIR}/mapped/star/{{sample}}/Aligned.sortedByCoord.out.bam', sample=samples['sample']),
 		expand(f'{OUTDIR}/mapped/hisat2/{{sample}}_sorted.bam', sample=samples['sample'])

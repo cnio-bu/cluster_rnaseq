@@ -158,16 +158,6 @@ properties:
                         type: integer
                     walltime:
                         type: integer
-
-            htseq_count:
-                type: object
-                properties:
-                    threads:
-                        type: integer
-                    mem:
-                        type: integer
-                    walltime:
-                        type: integer
                
             salmon_index:
                 type: object
