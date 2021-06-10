@@ -1,0 +1,8 @@
+name: cuantification
+channels:
+  - conda-forge
+  - bioconda
+  - r
+  - defaults
+dependencies:
+  - htseq

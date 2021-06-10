@@ -17,9 +17,6 @@ properties:
     fq2:
         type: string
         description: path to second FASTQ file (if exists)
-    strandedness:
-        type: string
-        description: can be '0', 'yes' or 'reverse' according to protocol strandedness
     md5_fq1:
         type: string
         description: md5 hash code to FASTQ file

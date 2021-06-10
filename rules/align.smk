@@ -62,7 +62,7 @@ rule star_align_se:
         # path to STAR reference genome index
         index=config["ref"]["star"]["star_index"],
         # optional parameters
-        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
+        extra="--outSAMtype BAM SortedByCoordinate"
     log:
         f"{LOGDIR}/star/{{sample}}.log"
     wrapper:
@@ -84,7 +84,7 @@ rule star_align_paired:
         # path to STAR reference genome index
         index=config["ref"]["star"]["star_index"],
         # optional parameters
-        extra="--outSAMtype BAM SortedByCoordinate --quantMode GeneCounts"
+        extra="--outSAMtype BAM SortedByCoordinate"
     log:
         f"{LOGDIR}/star/{{sample}}.log"
     wrapper:
@@ -115,7 +115,7 @@ rule hisat2_sort:
     input:
         aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
     output:
-        sortedCoord=OUTDIR + "/mapped/hisat2/{sample}_sorted.bam"
+        sortedCoord=OUTDIR + "/mapped/hisat2/{sample}/Aligned.sortedByCoord.out.bam"
     log:
         f"{LOGDIR}/hisat2_sort/{{sample}}_sorted.log"
     threads:

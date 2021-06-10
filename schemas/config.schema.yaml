@@ -66,6 +66,15 @@ properties:
                         type: boolean
             multiqc:
                 type: string
+            
+            htseq-count:
+                type: object
+                properties:
+                    mode:
+                        type: string
+                    strandedness:
+                        type: string
+
     
     resources:
         properties:
@@ -150,6 +159,26 @@ properties:
                         type: integer
             
             hisat2_sort:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            bam_indexing:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            htseq_count:
                 type: object
                 properties:
                     threads:

@@ -40,6 +40,7 @@ parameters:
     trimming:
             adapters: ""
             extra: ""
+
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html
     salmon:
@@ -51,6 +52,13 @@ parameters:
         gencode: False ## Set to True if transcriptome source is gencode
     
     multiqc: "--config res/config/multiqc_config.yaml"
+
+    htseq-count:
+        # Mode: "union", "intersection-strict" or "intersection-nonempty" (default: union)
+        mode: "-m union"
+        # Strandness: "yes", "no" or "reverse" (default: yes)
+        strandedness: "-s yes"
+
 
 
 resources:
@@ -65,7 +73,7 @@ resources:
         walltime: 10
         
     multiqc:
-        threads: 1
+        threads: 8
         mem:  4096
         walltime: 10
 
@@ -96,6 +104,16 @@ resources:
     
     hisat2_sort:
         threads: 8
+        mem:  64000
+        walltime: 60
+
+    bam_indexing:
+        threads: 8
+        mem:  4096
+        walltime: 10
+        
+    htseq_count:
+        threads: 1
         mem:  4096
         walltime: 10
 
@@ -107,9 +125,9 @@ resources:
     star_index:
         threads: 8
         mem: 64000
-        walltime: 120
+        walltime: 720
 
     hisat2_index:
         threads: 32
         mem: 64000
-        walltime: 120
+        walltime: 180

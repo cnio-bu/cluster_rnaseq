@@ -42,6 +42,16 @@ def get_params(rule,param) -> int:
 		sys.exit(1)
 
 
+def get_aligner(chosen_aligner:int) -> str:
+
+	available_aligners = {0:'star', 1:'salmon', 2:'hisat2'}
+	try:
+		return available_aligners[chosen_aligner]
+	except KeyError:
+		print(f'Invalid aligner choice: {chosen_aligner}')
+		sys.exit(1)
+	
+
 #### LOAD SAMPLES TABLES ###
 
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
@@ -58,13 +68,12 @@ include: 'rules/qc.smk'
 include: 'rules/preprocess.smk'
 include: 'rules/index.smk'
 include: 'rules/align.smk'
-
+include: 'rules/cuantification.smk'
 
 rule all:
 	input:
 		f"{OUTDIR}/qc/multiqc_report.html",
 		f"{OUTDIR}/qc_concat/multiqc_report.html",
-		#expand(f'{OUTDIR}/trimmed/{{sample}}_R1.fastq.gz', sample=samples['sample']),
-		#expand(f'{OUTDIR}/mapped/star/{{sample}}/Aligned.sortedByCoord.out.bam', sample=samples['sample']),
-		expand(f'{OUTDIR}/mapped/hisat2/{{sample}}_sorted.bam', sample=samples['sample'])
-		#expand(f'{OUTDIR}/quant/salmon/{{sample}}/', sample=samples['sample'])
+		#expand(f'{OUTDIR}/quant/star/{{sample}}.tab', sample=samples['sample'])
+		#expand(f'{OUTDIR}/quant/salmon/{{sample}}/', sample=samples['sample']),
+		expand(f'{OUTDIR}/quant/{chosen_aligner}/{{sample}}.tab', sample=samples['sample'])
