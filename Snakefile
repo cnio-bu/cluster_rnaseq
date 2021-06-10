@@ -68,12 +68,10 @@ include: 'rules/qc.smk'
 include: 'rules/preprocess.smk'
 include: 'rules/index.smk'
 include: 'rules/align.smk'
-include: 'rules/cuantification.smk'
+include: 'rules/quantification.smk'
 
 rule all:
 	input:
 		f"{OUTDIR}/qc/multiqc_report.html",
 		f"{OUTDIR}/qc_concat/multiqc_report.html",
-		#expand(f'{OUTDIR}/quant/star/{{sample}}.tab', sample=samples['sample'])
-		#expand(f'{OUTDIR}/quant/salmon/{{sample}}/', sample=samples['sample']),
 		expand(f'{OUTDIR}/quant/{chosen_aligner}/{{sample}}.tab', sample=samples['sample'])
