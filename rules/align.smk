@@ -1,3 +1,7 @@
+## Let snakemake use paired reads whenever possible
+ruleorder: salmon_quant_paired > salmon_quant_se
+ruleorder: star_align_paired > star_align_se
+
 def get_hisat_reads(wildcards):
     if is_single_end(wildcards.sample):
         return f"{OUTDIR}/trimmed/{wildcards.sample}_R1.fastq.gz"
