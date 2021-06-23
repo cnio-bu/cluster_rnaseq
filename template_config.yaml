@@ -59,6 +59,11 @@ parameters:
         # Strandness: "yes", "no" or "reverse" (default: yes)
         strandedness: "-s yes"
 
+    deseq2:
+        # path or URL to design matrix
+        designmatrix: "designmatrix.tsv"
+        design: "~condition"
+
 
 
 resources:
@@ -83,24 +88,24 @@ resources:
         walltime: 10
         
     trim_adapters_paired_end:
-            threads: 1
-            mem:  4096
-            walltime: 10
+        threads: 1
+        mem:  4096
+        walltime: 10
  
     salmon_quant:
-            threads: 20
-            mem: 32000
-            walltime: 10
+        threads: 20
+        mem: 32000
+        walltime: 10
 
     star_align:
-            threads: 8
-            mem: 64000
-            walltime: 60
+        threads: 8
+        mem: 64000
+        walltime: 60
 
     hisat2_align:
-            threads: 8
-            mem: 64000
-            walltime: 60
+        threads: 8
+        mem: 64000
+        walltime: 60
     
     hisat2_sort:
         threads: 8
@@ -131,3 +136,18 @@ resources:
         threads: 32
         mem: 64000
         walltime: 180
+    
+    htseq_count_matrix:
+        threads: 1
+        mem:  4096
+        walltime: 10
+    
+    deseq2_init:
+        threads: 4
+        mem:  8192
+        walltime: 10
+    
+    deseq2_diffexp:
+        threads: 2
+        mem:  4096
+        walltime: 10

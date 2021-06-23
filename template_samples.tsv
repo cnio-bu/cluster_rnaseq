@@ -1,3 +1,5 @@
-sample	condition
-A	untreated
-B	treated
+sample	diffexp
+A	True
+B	True
+C	True
+D	True

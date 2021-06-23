@@ -5,10 +5,12 @@ properties:
     sample:
         type: string
         description: sample name/identifier
-    condition:
-        type: string
-        description: sample condition that will be compared during differential expression analysis (e.g. a treatment, a tissue time, a disease)
+    diffexp:
+        type: boolean
+        description: > 
+            whether or not to include the sample in the differential 
+            expression analysis
 
 required:
     - sample
-    - condition
+    - diffexp

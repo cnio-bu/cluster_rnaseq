@@ -1,0 +1,26 @@
+$schema: "http://json-schema.org/draft-07/schema#"
+
+description: design matrix for differential expression
+properties:
+    sample:
+        type: string
+        description: sample name/identifier
+    condition:
+        type: string
+        description: > 
+            sample condition to be compared during differential expression 
+            analysis (e.g. treatment, disease, tissue, etc.). Optional: use 
+            '*' as prefix to indicate the reference level. Otherwise, the 
+            reference will be the first level in alphabetical/ascending order.
+    covariates:
+        type: string
+        description: >
+            other conditions to be taken into account during the analysis 
+            (e.g. date, dose, cell line, etc.). Add as many columns as 
+            covariates has your experiment. Optional: use '*' as prefix to 
+            indicate the reference level. Otherwise, the reference will be the 
+            first level in alphabetical/ascending order.
+
+required:
+    - sample
+    - condition

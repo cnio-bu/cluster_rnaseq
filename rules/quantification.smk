@@ -1,5 +1,3 @@
-chosen_aligner = get_aligner(int(config['aligner']))
-
 ### BAM INDEXING ###
 rule bam_indexing:
     input:

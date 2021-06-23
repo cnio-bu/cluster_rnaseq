@@ -66,7 +66,6 @@ properties:
                         type: boolean
             multiqc:
                 type: string
-            
             htseq-count:
                 type: object
                 properties:
@@ -74,6 +73,16 @@ properties:
                         type: string
                     strandedness:
                         type: string
+            deseq2:
+                type: object
+                properties:
+                    designmatrix:
+                        type: string
+                    design:
+                        type: string
+                required:
+                    - designmatrix
+                    - design
 
     
     resources:
@@ -209,6 +218,35 @@ properties:
                         type: integer
             
             hisat2_index:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            htseq_count_matrix:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            deseq2_init:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            deseq2_diffexp:
                 type: object
                 properties:
                     threads:

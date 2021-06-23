@@ -1,0 +1,5 @@
+sample	condition	date
+A	*untreated	*day1
+B	treated	day2
+C	*untreated	day2
+D	treated	*day1
