@@ -2,7 +2,7 @@ def get_hisat_reads(wildcards):
     if is_single_end(wildcards.sample):
         return f"{OUTDIR}/trimmed/{wildcards.sample}_R1.fastq.gz"
     else:
-        return expand(f"{OUTDIR}/trimmed/{{sample}}_R{strand}.fastq.gz", strand=[1,2], **wildcards)
+        return expand(f"{OUTDIR}/trimmed/{{sample}}_R{{strand}}.fastq.gz", strand=[1,2], **wildcards)
 
 
 ### SALMON ###
