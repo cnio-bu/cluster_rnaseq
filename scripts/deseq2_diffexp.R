@@ -25,7 +25,7 @@ levels <- snakemake@params[["levels"]]
 dds <- readRDS(dds)
 
 # Get results
-res <- results(dds, contrast = c(condition, levels), parallel = parallel)
+res <- results(dds, contrast = c(condition, levels), alpha=0.05, parallel = parallel)
 
 # Sort by adjusted p-value
 res <- res[order(res$padj, decreasing = FALSE), ]
