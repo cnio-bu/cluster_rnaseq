@@ -51,7 +51,7 @@ rule trim_adapters_single_end:
         mem=get_resource('trim_adapters_single_end', 'mem'),
         walltime=get_resource('trim_adapters_single_end', 'walltime')
     params:
-        #adapters="-a {}".format(get_params("trimming","adapter")),
+        adapters=get_params("trimming","adapter"),
         extra=get_params('trimming', 'extra')
     log:
         f"{LOGDIR}/trim_adapters_single_end/{{sample}}.log",
@@ -72,7 +72,7 @@ rule trim_adapters_paired_end:
         mem=get_resource('trim_adapters_paired_end', 'mem'),
         walltime=get_resource('trim_adapters_paired_end', 'walltime')
     params:
-        #adapters="-a {}".format(get_params("trimming","adapter")),
+        adapters=get_params("trimming","adapter"),
         extra=get_params('trimming', 'extra')
     log:
         f"{LOGDIR}/trim_adapters_paired_end/{{sample}}.log",
