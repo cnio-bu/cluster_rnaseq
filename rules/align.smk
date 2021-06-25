@@ -13,7 +13,7 @@ def get_hisat_reads(wildcards):
 rule salmon_quant_se:
     input:
         salmon_index=rules.salmon_index.output,
-        se_reads=rules.trim_adapters_single_end.output.fastq
+        se_reads=rules.trim_adapters_single_end.output.trimmed
     output:
         quant=directory(OUTDIR + '/quant/salmon/{sample}/')
     threads:
@@ -33,8 +33,8 @@ rule salmon_quant_se:
 rule salmon_quant_paired:
     input:
         salmon_index=rules.salmon_index.output,
-        r1_reads=rules.trim_adapters_paired_end.output.fastq1,
-        r2_reads=rules.trim_adapters_paired_end.output.fastq2
+        r1_reads=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
+        r2_reads=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz"
     output:
         quant=directory(OUTDIR + '/quant/salmon/{sample}/')
     threads:
@@ -54,7 +54,7 @@ rule salmon_quant_paired:
 ### STAR ###
 rule star_align_se:
     input:
-        fq1=rules.trim_adapters_single_end.output.fastq
+        fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz"
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -75,8 +75,8 @@ rule star_align_se:
 
 rule star_align_paired:
     input:
-        fq1=rules.trim_adapters_paired_end.output.fastq1,
-        fq2=rules.trim_adapters_paired_end.output.fastq2
+        fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
+        fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz"
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:

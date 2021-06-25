@@ -38,8 +38,8 @@ ref:
 
 parameters:
     trimming:
-            adapters: "-a file:resources/trimming/adapters.fa"
-            extra: "-m 1"
+            adapters: "resources/trimming/adapters.fa"
+            extra: "-Xmx2g ktrim=r k=23 mink=11 hdist=1"
 
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html

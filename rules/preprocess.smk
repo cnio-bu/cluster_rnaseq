@@ -41,40 +41,43 @@ rule concat_R2_reads:
 
 rule trim_adapters_single_end:
     input:
-        get_single_raw_fastq,
+        sample=get_single_raw_fastq
     output:
-        fastq=OUTDIR + "/trimmed/{sample}_R1.fastq.gz",
-        qc=OUTDIR + "/qc/trimming/{sample}.qc.txt"
+        trimmed=OUTDIR + '/trimmed/{sample}/{sample}_R1.fastq.gz',
+        singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
+        discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
+        stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     threads:
         get_resource('trim_adapters_single_end', 'threads')
     resources:
         mem=get_resource('trim_adapters_single_end', 'mem'),
         walltime=get_resource('trim_adapters_single_end', 'walltime')
     params:
-        adapters=get_params("trimming","adapters"),
+        adapters='ref=' + get_params('trimming','adapters'),
         extra=get_params('trimming', 'extra')
     log:
         f"{LOGDIR}/trim_adapters_single_end/{{sample}}.log",
     wrapper:
-        '0.74.0/bio/cutadapt/se'
+        '0.74.0/bio/bbtools/bbduk'
 
 
 rule trim_adapters_paired_end:
     input:
-        get_paired_raw_fastq,
+        sample=get_paired_raw_fastq
     output:
-        fastq1=OUTDIR + "/trimmed/{sample}_R1.fastq.gz",
-        fastq2=OUTDIR + "/trimmed/{sample}_R2.fastq.gz",
-        qc=OUTDIR + "/qc/trimming/{sample}.qc.txt"
+        trimmed=expand(OUTDIR + '/trimmed/{{sample}}/{{sample}}_R{strand}.fastq.gz', strand=[1,2]),
+        singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
+        discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
+        stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     threads:
         get_resource('trim_adapters_paired_end', 'threads')
     resources:
         mem=get_resource('trim_adapters_paired_end', 'mem'),
         walltime=get_resource('trim_adapters_paired_end', 'walltime')
     params:
-        adapters=get_params("trimming","adapters"),
-        extra=get_params('trimming', 'extra')
+        adapters='ref=' + get_params('trimming','adapters'),
+        extra=get_params('trimming', 'extra') + ' tpe tbo'
     log:
         f"{LOGDIR}/trim_adapters_paired_end/{{sample}}.log",
     wrapper:
-        '0.74.0/bio/cutadapt/pe'
+        '0.74.0/bio/bbtools/bbduk'
