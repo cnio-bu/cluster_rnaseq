@@ -47,6 +47,13 @@ properties:
 
     parameters:
         properties:
+            downsampling:
+                type: object
+                properties:
+                    n:
+                        type: integer
+                    seed:
+                        type: integer
             trimming:
                 type: object
                 properties:

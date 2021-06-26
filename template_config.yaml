@@ -37,6 +37,9 @@ ref:
 
 
 parameters:
+    downsampling:
+        n: 10000000 # Downsample to 10 million reads
+        seed: 12345
     trimming:
             adapters: "resources/trimming/adapters.fa"
             extra: "-Xmx2g ktrim=r k=23 mink=11 hdist=1"
@@ -149,5 +152,15 @@ resources:
     
     deseq2_diffexp:
         threads: 2
+        mem:  4096
+        walltime: 10
+    
+    downsample_single_end:
+        threads: 1
+        mem:  4096
+        walltime: 10
+    
+    downsample_paired_end:
+        threads: 1
         mem:  4096
         walltime: 10
