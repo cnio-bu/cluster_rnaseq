@@ -7,6 +7,7 @@ channels:
 dependencies:
   - salmon
   - samtools
+  - star
 
 
 

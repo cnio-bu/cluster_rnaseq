@@ -54,7 +54,9 @@ rule salmon_quant_paired:
 ### STAR ###
 rule star_align_se:
     input:
-        fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz"
+        fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
+        # path to STAR reference genome index
+        index=directory(config["ref"]["star"]["star_index"])
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -63,20 +65,22 @@ rule star_align_se:
         mem=get_resource('star_align', 'mem'),
         walltime=get_resource('star_align', 'walltime')
     params:
-        # path to STAR reference genome index
-        index=config["ref"]["star"]["star_index"],
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate"
     log:
         f"{LOGDIR}/star/{{sample}}.log"
-    wrapper:
-        "0.74.0/bio/star/align"
+    conda:
+        '../envs/aligners.yaml'
+    script:
+        "../scripts/star.py"
 
 
 rule star_align_paired:
     input:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
-        fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz"
+        fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz",
+        # path to STAR reference genome index
+        index=directory(config["ref"]["star"]["star_index"])
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -85,20 +89,21 @@ rule star_align_paired:
         mem=get_resource('star_align', 'mem'),
         walltime=get_resource('star_align', 'walltime')
     params:
-        # path to STAR reference genome index
-        index=config["ref"]["star"]["star_index"],
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate"
     log:
         f"{LOGDIR}/star/{{sample}}.log"
-    wrapper:
-        "0.74.0/bio/star/align"
+    conda:
+        '../envs/aligners.yaml'
+    script:
+        "../scripts/star.py"
 
 
 ## HISAT-2 ##
 rule hisat2_align:
     input:
         reads=get_hisat_reads
+        index_dir = directory(idx=config["ref"]["hisat2"]["hisat2_index"])
     output:
         aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
     log:
