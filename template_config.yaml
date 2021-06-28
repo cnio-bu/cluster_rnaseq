@@ -20,6 +20,8 @@ ref:
         # fasta file with transcripts
         fasta: "/my/genome.fasta"
         # STAR aligner index path (auto generated if not already present)
+        # Deafult: Cluster's shared index
+        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a/"
         star_index: "/my/genome_idx"
     salmon: 
        # salmon transcriptome: .fa.gz
@@ -27,7 +29,8 @@ ref:
         # salmon genome assembly: .ga.gz
         genome_assembly: "/path/to/salmon/genome_assembly"
         # Salmon aligner index path (auto generated if not already present)
-        salmon_index: "/my/genome_idx"
+        # Deafult: Cluster's shared index
+        salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.0/"
     hisat2:
         # fasta file with transcripts
         fasta: "/my/genome.fasta"
