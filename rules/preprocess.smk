@@ -36,8 +36,8 @@ rule trim_adapters_single_end:
         sample=OUTDIR + '/downsampled/{sample}_R1.fastq.gz'
     output:
         trimmed=OUTDIR + '/trimmed/{sample}/{sample}_R1.fastq.gz',
-        singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
-        discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
+        #singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
+        #discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     threads:
         get_resource('trim_adapters_single_end', 'threads')
@@ -58,8 +58,8 @@ rule trim_adapters_paired_end:
         sample=expand(OUTDIR + '/downsampled/{{sample}}_R{strand}.fastq.gz', strand=[1,2])
     output:
         trimmed=expand(OUTDIR + '/trimmed/{{sample}}/{{sample}}_R{strand}.fastq.gz', strand=[1,2]),
-        singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
-        discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
+        #singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
+        #discarded=OUTDIR + '/trimmed/{sample}/{sample}.discarded.fastq.gz',
         stats=OUTDIR + '/trimmed/{sample}/{sample}.stats.txt'
     threads:
         get_resource('trim_adapters_paired_end', 'threads')
