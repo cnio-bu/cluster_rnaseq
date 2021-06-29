@@ -20,14 +20,14 @@ def get_R2_fragments(wildcards):
 rule concat_R1_reads:
 	input:get_R1_fragments
 	output:
-		concat_read = OUTDIR + f'/reads/{{sample}}_R1_concat.fastq.gz'
+		concat_read = temp(OUTDIR + f'/reads/{{sample}}_R1_concat.fastq.gz')
 	shell: 'cat {input} > {output}'
 
 
 rule concat_R2_reads:
 	input: get_R2_fragments
 	output:
-		concat_read = OUTDIR + f'/reads/{{sample}}_R2_concat.fastq.gz'
+		concat_read = temp(OUTDIR + f'/reads/{{sample}}_R2_concat.fastq.gz')
 	shell: 'cat {input} > {output}'
 
 
@@ -78,7 +78,7 @@ rule downsample_single_end:
     input:
         lambda wildcards: get_raw_fastq(wildcards, strand=1)
     output:
-        OUTDIR + '/downsampled/{sample}_R1.fastq.gz'
+        temp(OUTDIR + '/downsampled/{sample}_R1.fastq.gz')
     threads:
         get_resource('downsample_single_end', 'threads')
     resources:
@@ -97,8 +97,8 @@ rule downsample_paired_end:
         f1=lambda wildcards: get_raw_fastq(wildcards, strand=1),
         f2=lambda wildcards: get_raw_fastq(wildcards, strand=2)
     output:
-        f1=OUTDIR + '/downsampled/{sample}_R1.fastq.gz',
-        f2=OUTDIR + '/downsampled/{sample}_R2.fastq.gz'
+        f1=temp(OUTDIR + '/downsampled/{sample}_R1.fastq.gz'),
+        f2=temp(OUTDIR + '/downsampled/{sample}_R2.fastq.gz')
     threads:
         get_resource('downsample_paired_end', 'threads')
     resources:
