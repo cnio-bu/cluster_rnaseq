@@ -102,8 +102,8 @@ rule star_align_paired:
 ## HISAT-2 ##
 rule hisat2_align:
     input:
-        reads=get_hisat_reads
-        index_dir = directory(idx=config["ref"]["hisat2"]["hisat2_index"])
+        reads=get_hisat_reads,
+        index_dir = directory(config["ref"]["hisat2"]["hisat2_index"])
     output:
         aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
     log:
