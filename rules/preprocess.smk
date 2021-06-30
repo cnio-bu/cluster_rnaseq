@@ -4,9 +4,9 @@ ruleorder: trim_adapters_paired_end > trim_adapters_single_end
 def get_single_raw_fastq(wildcards):
 
     if is_multi_lane(wildcards.sample):
-        return f'{OUTDIR}/reads/{wildcards.sample}_R1_concat.fastq.gz'
+        return [f'{OUTDIR}/reads/{wildcards.sample}_R1_concat.fastq.gz']
     else:
-        return units.loc[wildcards.sample, "fq1"]
+        return [units.loc[wildcards.sample, "fq1"]]
 
 
 def get_paired_raw_fastq(wildcards):
@@ -14,7 +14,7 @@ def get_paired_raw_fastq(wildcards):
     if is_multi_lane(wildcards.sample):
         return expand(OUTDIR + '/reads/{sample}_R{strand}_concat.fastq.gz', strand=[1,2], **wildcards)
     else:
-        return units.loc[wildcards.sample, ["fq1", "fq2"]].dropna()
+        return units.loc[wildcards.sample, ["fq1", "fq2"]].dropna().to_list()
 
 
 def get_R1_fragments(wildcards):

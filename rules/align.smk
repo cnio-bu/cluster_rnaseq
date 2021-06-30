@@ -4,9 +4,9 @@ ruleorder: star_align_paired > star_align_se
 
 def get_hisat_reads(wildcards):
     if is_single_end(wildcards.sample):
-        return f"{OUTDIR}/trimmed/{wildcards.sample}_R1.fastq.gz"
+        return f"{OUTDIR}/trimmed/{wildcards.sample}/{wildcards.sample}_R1.fastq.gz"
     else:
-        return expand(f"{OUTDIR}/trimmed/{{sample}}_R{{strand}}.fastq.gz", strand=[1,2], **wildcards)
+        return expand(f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R{{strand}}.fastq.gz", strand=[1,2], **wildcards)
 
 
 ### SALMON ###
@@ -56,7 +56,7 @@ rule star_align_se:
     input:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         # path to STAR reference genome index
-        index=directory(config["ref"]["star"]["star_index"])
+        index=rules.star_index.output
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -80,7 +80,7 @@ rule star_align_paired:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz",
         # path to STAR reference genome index
-        index=directory(config["ref"]["star"]["star_index"])
+        index=rules.star_index.output
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -103,7 +103,7 @@ rule star_align_paired:
 rule hisat2_align:
     input:
         reads=get_hisat_reads,
-        index_dir = directory(config["ref"]["hisat2"]["hisat2_index"])
+        index_dir = rules.hisat2_index.output
     output:
         aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
     log:
