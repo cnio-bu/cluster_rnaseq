@@ -87,7 +87,7 @@ rule multiqc:
 
 rule fastqc_concat:
     input:
-        f"{OUTDIR}/trimmed/{{sample}}_R{{read}}.fastq.gz"
+        f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R{{read}}.fastq.gz"
     output:
         html=f"{OUTDIR}/qc_concat/fastqc/{{sample}}_R{{read}}_fastqc.html",
         zip=f"{OUTDIR}/qc_concat/fastqc/{{sample}}_R{{read}}_fastqc.zip"

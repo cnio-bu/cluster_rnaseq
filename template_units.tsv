@@ -1,4 +1,4 @@
-sample	lane	fq1	fq2	strandedness	md5_fq1	md5_fq2
+sample	lane	fq1	fq2	md5_fq1	md5_fq2
 A	1	A1.1.fq.gz	A1.2.fq.gz			
 A	2	A2.1.fq.gz	A2.2.fq.gz			
 B	1	B1.1.fq.gz	B1.2.fq.gz
