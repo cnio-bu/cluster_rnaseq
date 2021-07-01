@@ -30,7 +30,7 @@ rule htseq_count:
         walltime=get_resource('htseq_count', 'walltime')
     params:
         annotation= config['ref'][chosen_aligner]['annotation'],
-        extra='-f bam -r pos',
+        extra='-f bam -r pos ' + config['parameters']['htseq-count']['extra'],
         mode = config['parameters']['htseq-count']['mode'],
         strandedness = config['parameters']['htseq-count']['strandedness']
     log:

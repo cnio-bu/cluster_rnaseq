@@ -64,6 +64,7 @@ parameters:
         mode: "-m union"
         # Strandness: "yes", "no" or "reverse" (default: yes)
         strandedness: "-s yes"
+        extra: "-i gene_name"
 
     deseq2:
         # path or URL to design matrix

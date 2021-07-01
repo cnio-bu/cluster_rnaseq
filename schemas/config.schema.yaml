@@ -80,6 +80,8 @@ properties:
                         type: string
                     strandedness:
                         type: string
+                    extra:
+                        type: string
             deseq2:
                 type: object
                 properties:
