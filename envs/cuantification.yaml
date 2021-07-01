@@ -5,4 +5,4 @@ channels:
   - r
   - defaults
 dependencies:
-  - htseq
+  - htseq=0.12.4
