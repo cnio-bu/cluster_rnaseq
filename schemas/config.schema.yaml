@@ -196,6 +196,16 @@ properties:
                         type: integer
                     walltime:
                         type: integer
+            
+            salmon_matrix_from_quants:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
                
             salmon_index:
                 type: object

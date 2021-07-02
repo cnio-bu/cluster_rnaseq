@@ -5,4 +5,7 @@ channels:
   - r
   - defaults
 dependencies:
+  - bioconductor-deseq2
+  - bioconductor-tximeta
+  - r-readr
   - htseq
