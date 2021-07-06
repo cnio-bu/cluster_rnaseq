@@ -19,9 +19,9 @@ def multiqc_concat_input(units):
     all_input = paths_fqc_fq1+paths_fqc_fq2
 
     if config["aligner"] == 0:
-        all_input += expand(f"{OUTDIR}/mapped/star/{{samples.sample}}/", samples=samples.itertuples())
+        all_input += expand(f"{OUTDIR}/mapped/star/{{samples.sample}}/Aligned.sortedByCoord.out.bam", samples=samples.itertuples())
     elif config["aligner"] == 1:
-        all_input += expand(f"{OUTDIR}/quant/salmon/{{samples.sample}}/", samples=samples.itertuples())
+        all_input += expand(f"{OUTDIR}/quant/salmon/{{samples.sample}}/quant.sf", samples=samples.itertuples())
     elif config["aligner"] == 2:
         all_input += expand(f"{LOGDIR}/hisat2_align/{{samples.sample}}.log", samples=samples.itertuples())
     else:
