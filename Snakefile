@@ -113,6 +113,8 @@ rest_levels = [y for y in designmatrix[var_interest].unique() \
 contrasts = [(z + "_vs_" + ref_interest, [z, ref_interest]) \
             for z in rest_levels]
 contrasts = {key: value for (key, value) in contrasts}
+allSamples = {"allSamples": list(set([ref_interest] + rest_levels))}
+allSamples.update(contrasts)
 
 #### Load rules ####
 include: 'rules/common.smk'
@@ -130,6 +132,10 @@ rule all:
 		f"{OUTDIR}/qc/multiqc_report.html",
 		f"{OUTDIR}/qc_concat/multiqc_report.html",
 		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_pca.pdf", contrast=contrasts.keys()),
+			  f"{{contrast}}_diffexp.xlsx", contrast=contrasts.keys()),
 		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_pca.png", contrast=contrasts.keys())
+			  f"{{contrast}}_diffexp.tsv", contrast=contrasts.keys()),
+		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/" + \
+			  f"{{ALLcontrast}}_pca.pdf", ALLcontrast=allSamples.keys()),
+		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/" + \
+			  f"{{ALLcontrast}}_pca.png", ALLcontrast=allSamples.keys())
