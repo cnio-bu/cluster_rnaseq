@@ -12,12 +12,17 @@ source("scripts/plotPCA.3.R")
 vsd <- snakemake@input[["vst"]]
 
 ## SNAKEMAKE PARAMS ##
-#condition <- snakemake@params[["condition"]]
-#levels <- snakemake@params[["levels"]]
+levels <- snakemake@params[["levels"]]
 
 ## CODE ##
 # Get vst
 vsd <- readRDS(vsd)
+
+# Subset the sample names according to the specified levels
+samples <- rownames(colData(vsd))[colData(vsd)$condition %in% levels]
+
+# Subset samples
+vsd <- vsd[, samples]
 
 # PCA plots for the first 3 principal components
 pca12 <- plotPCA.3(vsd)
