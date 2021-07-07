@@ -122,6 +122,7 @@ include: 'rules/index.smk'
 include: 'rules/align.smk'
 include: 'rules/quantification.smk'
 include: 'rules/deseq2.smk'
+include: 'rules/plots.smk'
 
 rule all:
 	input:
@@ -129,6 +130,6 @@ rule all:
 		f"{OUTDIR}/qc/multiqc_report.html",
 		f"{OUTDIR}/qc_concat/multiqc_report.html",
 		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_diffexp.xlsx", contrast=contrasts.keys()),
+			  f"{{contrast}}_pca.pdf", contrast=contrasts.keys()),
 		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+			  f"{{contrast}}_pca.png", contrast=contrasts.keys())
