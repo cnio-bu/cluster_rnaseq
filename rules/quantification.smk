@@ -37,7 +37,7 @@ rule htseq_count:
         f"{LOGDIR}/htseq_count/{{sample}}.log"
     conda:
         '../envs/cuantification.yaml'
-    shell: 'htseq-count {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant}'
+    shell: 'htseq-count {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant} 2> {log}'
 
 
 rule salmon_matrix_from_quants:

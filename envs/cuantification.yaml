@@ -8,4 +8,4 @@ dependencies:
   - bioconductor-deseq2
   - bioconductor-tximeta
   - r-readr
-  - htseq
+  - htseq=0.12.4
