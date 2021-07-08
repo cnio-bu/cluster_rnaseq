@@ -128,7 +128,7 @@ rule all:
 		#f"{OUTDIR}/deseq2/salmon/counts.tsv"
 		f"{OUTDIR}/qc/multiqc_report.html",
 		f"{OUTDIR}/qc_concat/multiqc_report.html",
-		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_diffexp.xlsx", contrast=contrasts.keys()),
-		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+		#expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
+		#	  f"{{contrast}}_diffexp.xlsx", contrast=contrasts.keys()),
+		#expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
+		#	  f"{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
