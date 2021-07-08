@@ -10,7 +10,8 @@ rule pca:
     #    mem=get_resource("deseq2_diffexp", "mem"),
     #    walltime=get_resource("deseq2_diffexp", "walltime")
     params:
-        levels=lambda wildcards: allSamples[wildcards.ALLcontrast]
+        levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
+        design=config['parameters']['deseq2']['design']
     log: f"{LOGDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/pca.log"
     conda:
         "../envs/plots.yaml"
