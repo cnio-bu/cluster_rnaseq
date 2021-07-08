@@ -1,4 +1,4 @@
-### BAM INDEXING ###
+###  BAM INDEXING ###
 rule bam_indexing:
     input:
         aligned=f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam"
@@ -29,12 +29,36 @@ rule htseq_count:
         mem=get_resource('htseq_count', 'mem'),
         walltime=get_resource('htseq_count', 'walltime')
     params:
-        annotation= config['ref'][chosen_aligner]['annotation'],
-        extra='-f bam -r pos ' + config['parameters']['htseq-count']['extra'],
+        annotation= lambda x: config['ref'][chosen_aligner]['annotation'] if chosen_aligner != 'salmon' else '',
+        extra='-f bam -r pos' + config['parameters']['htseq-count']['extra'],
         mode = config['parameters']['htseq-count']['mode'],
         strandedness = config['parameters']['htseq-count']['strandedness']
     log:
         f"{LOGDIR}/htseq_count/{{sample}}.log"
     conda:
         '../envs/cuantification.yaml'
-    shell: 'htseq-count {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant}'
+    shell: 'htseq-count {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant} 2> {log}'
+
+
+rule salmon_matrix_from_quants:
+    input:
+        quants = expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf",  sample=samples['sample'])
+    output:
+        gene_level_matrix    = f"{OUTDIR}/deseq2/salmon/counts.tsv",
+        transcript_estimates = f"{OUTDIR}/deseq2/salmon/transcript_level_estimates.rds",
+        metadata_cache      = temp(directory(f"{OUTDIR}/quant/salmon/metadata_cache"))
+
+    threads:  
+        get_resource('salmon_matrix_from_quants', 'threads')
+    resources:
+        mem=get_resource('salmon_matrix_from_quants', 'mem'),
+        walltime=get_resource('salmon_matrix_from_quants', 'walltime')
+    params:
+        salmon_quant_directory = f"{OUTDIR}/quant/salmon",
+        samples                  = config['samples']
+    log:
+        f"{LOGDIR}/salmon_matrix_from_quants.log"
+    conda:
+        '../envs/cuantification.yaml'
+    script:
+        '../scripts/salmon_matrix_from_quant.R'

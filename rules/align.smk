@@ -15,19 +15,20 @@ rule salmon_quant_se:
         salmon_index=rules.salmon_index.output,
         se_reads=rules.trim_adapters_single_end.output.trimmed
     output:
-        quant=directory(OUTDIR + '/quant/salmon/{sample}/')
+        quant=f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf"
     threads:
         get_resource('salmon_quant', 'threads')
     resources:
         mem=get_resource('salmon_quant', 'mem'),
         walltime=get_resource('salmon_quant', 'walltime')
     params:
-        libtype=get_params('salmon', 'libtype')
+        libtype=get_params('salmon', 'libtype'),
+        quant_directory=directory(f"{OUTDIR}/quant/salmon/{{sample}}")
     log:
         f"{LOGDIR}/salmon_quant/{{sample}}.log"
     conda:
         '../envs/aligners.yaml'
-    shell: 'salmon quant -i {input.salmon_index} -l {params.libtype} -r {input.se_reads} --validateMappings -o {output.quant} --threads {threads}'
+    shell: 'salmon quant -i {input.salmon_index} -l {params.libtype} -r {input.se_reads} --validateMappings -o {params.quant_directory} --threads {threads}'
 
 
 rule salmon_quant_paired:
@@ -36,19 +37,20 @@ rule salmon_quant_paired:
         r1_reads=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         r2_reads=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz"
     output:
-        quant=directory(OUTDIR + '/quant/salmon/{sample}/')
+        quant= f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf",
     threads:
         get_resource('salmon_quant', 'threads')
     resources:
         mem=get_resource('salmon_quant', 'mem'),
         walltime=get_resource('salmon_quant', 'walltime')
     params:
-        libtype=get_params('salmon', 'libtype')
+        libtype=get_params('salmon', 'libtype'),
+        quant_directory=directory(f"{OUTDIR}/quant/salmon/{{sample}}")
     log:
         f"{LOGDIR}/salmon_quant/{{sample}}.log"
     conda:
         '../envs/aligners.yaml'
-    shell: 'salmon quant -i {input.salmon_index} -l {params.libtype} -1 {input.r1_reads} -2 {input.r2_reads} --validateMappings -o {output.quant} --threads {threads}'
+    shell: 'salmon quant -i {input.salmon_index} -l {params.libtype} -1 {input.r1_reads} -2 {input.r2_reads} --validateMappings -o {params.quant_directory} --threads {threads}'
 
 
 ### STAR ###

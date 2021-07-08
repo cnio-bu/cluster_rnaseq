@@ -129,6 +129,11 @@ resources:
         mem:  4096
         walltime: 10
 
+    salmon_matrix_from_quants:
+        threads: 1
+        mem: 4096
+        walltime: 10
+        
     salmon_index:
         threads: 32
         mem: 64000
