@@ -10,6 +10,8 @@ rule htseq_count_matrix:
         mem=get_resource("htseq_count_matrix", "mem"),
         walltime=get_resource("htseq_count_matrix", "walltime")
     log: f"{LOGDIR}/deseq2/{chosen_aligner}/htseq_count_matrix.log"
+    conda:
+        '../envs/deseq2.yaml'
     script:
         "../scripts/htseq_count_matrix.R"
 
