@@ -30,7 +30,7 @@ rule deseq2_init:
     params:
         samples=config['samples'],
         designmatrix=config['parameters']['deseq2']['designmatrix'],
-        ref_levels=ref_levels,
+        ref_levels=ref_levels.to_list(),
         design=config['parameters']['deseq2']['design']
     log: f"{LOGDIR}/deseq2/{chosen_aligner}/deseq2_init.log"
     conda:
