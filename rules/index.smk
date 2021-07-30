@@ -39,6 +39,8 @@ rule salmon_index:
         walltime=get_resource('salmon_index', 'walltime')
     params:
         gencode = IS_GENCODE # Dirty, but necessary. See Snakefile.
+    log:
+        f"{LOGDIR}/salmon_index/index.log"
     conda:
         '../envs/aligners.yaml'
     shell:

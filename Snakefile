@@ -50,6 +50,17 @@ def get_aligner(chosen_aligner:int) -> str:
 	except KeyError:
 		print(f'Invalid aligner choice: {chosen_aligner}')
 		sys.exit(1)
+
+
+def get_quantifier(chosen_quantifier:int) -> str:
+
+	available_quantifiers = {0:'htseq', 1:'featureCounts'}
+	try:
+		return available_quantifiers[chosen_quantifier]
+	except KeyError:
+		print(f'Invalid quantifier choice: {chosen_quantifier}')
+		sys.exit(1)
+
 	
 def get_reference_level(x):
     '''
@@ -91,6 +102,9 @@ validate(designmatrix, schema="schemas/designmatrix.schema.yaml")
 #### Get aligner ####
 chosen_aligner = get_aligner(int(config['aligner']))
 
+#### Get quantifier ####
+chosen_quantifier = get_quantifier(int(config['quantifier']))
+
 #### Subset the design matrix keeping only samples for DEA ####
 DEAsamples = samples[samples["diffexp"]].index
 designmatrix = designmatrix.loc[DEAsamples,]
@@ -123,12 +137,20 @@ include: 'rules/align.smk'
 include: 'rules/quantification.smk'
 include: 'rules/deseq2.smk'
 
+
+def get_all_input():
+
+	all_input= [f"{OUTDIR}/qc/multiqc_report.html",	f"{OUTDIR}/qc_concat/multiqc_report.html"]
+
+	if chosen_aligner == "salmon":
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	else:
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	return all_input
+
+
 rule all:
 	input:
-		#f"{OUTDIR}/deseq2/salmon/counts.tsv"
-		f"{OUTDIR}/qc/multiqc_report.html",
-		f"{OUTDIR}/qc_concat/multiqc_report.html",
-		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_diffexp.xlsx", contrast=contrasts.keys()),
-		expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-			  f"{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+		get_all_input()

@@ -9,3 +9,4 @@ dependencies:
   - bioconductor-tximeta
   - r-readr
   - htseq=0.12.4
+  - subread

@@ -10,8 +10,13 @@ outdir: ''
 # path to the logs directory
 logdir: ''
 
+## ALIGNER ##
 # 0 = STAR, 1 = SALMON, 2 = HISAT2
 aligner: 0
+
+## QUANTIFIER ##
+# 0 = HTSEQ, 1 = FEATURECOUNTS
+quantifier: 1
 
 # genomic reference sequences and annotations for aligners and quantifiers
 ref:
@@ -30,7 +35,7 @@ ref:
         genome_assembly: "/path/to/salmon/genome_assembly"
         # Salmon aligner index path (auto generated if not already present)
         # Deafult: Cluster's shared index
-        salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.1"
+        salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.2"
     hisat2:
         # fasta file with transcripts
         fasta: "/my/genome.fasta"
@@ -61,6 +66,11 @@ parameters:
         mode: "-m union"
         # Strandness: "yes", "no" or "reverse" (default: yes)
         strandedness: "-s yes"
+
+    featureCounts:
+        extra: ""
+        # Strandness: 0 = "unstranded", 1 = "stranded", 2 = "reversely stranded" (default: 0)
+        strandedness: "-s 1"
 
     deseq2:
         # path or URL to design matrix
@@ -121,10 +131,15 @@ resources:
         walltime: 10
         
     htseq_count:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  64000
+        walltime: 120
 
+    featureCounts:
+        threads: 8
+        mem:  64000
+        walltime: 120
+    
     salmon_matrix_from_quants:
         threads: 1
         mem: 4096
@@ -133,7 +148,7 @@ resources:
     salmon_index:
         threads: 32
         mem: 64000
-        walltime: 60
+        walltime: 180
 
     star_index:
         threads: 8
