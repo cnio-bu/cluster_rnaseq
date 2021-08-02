@@ -30,6 +30,7 @@ properties:
                         type: string
                     star_index:
                         type: string
+            
             salmon:
                 type: object
                 properties:
@@ -37,6 +38,8 @@ properties:
                         type: string
                     genome_assembly:
                         type: string
+                    salmon_index: string
+            
             hisat2:
                 type: object
                 properties:
@@ -47,19 +50,25 @@ properties:
                     annotation:
                         type: string
 
+
     parameters:
         properties:
             trimming:
                 type: object
                 properties:
-                    adapter:
+                    adapters:
                         type: string
-                    additional:
+                    extra:
                         type: string
+
             salmon:
                 type: object
                 properties:
                     libtype:
+                        type: string
+                    adapters:
+                        type: string
+                    extra:
                         type: string
 
             salmon_index:
@@ -290,6 +299,7 @@ properties:
                         type: integer
                     walltime:
                         type: integer
+
 
 required:
     - samples
