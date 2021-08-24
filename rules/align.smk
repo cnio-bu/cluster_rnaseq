@@ -107,7 +107,7 @@ rule hisat2_align:
         reads=get_hisat_reads,
         index_dir = rules.hisat2_index.output
     output:
-        aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
+        aligned=OUTDIR + "/mapped/hisat2/{sample}/{sample}.bam"
     log:
         f"{LOGDIR}/hisat2_align/{{sample}}.log"
     params:
@@ -124,7 +124,7 @@ rule hisat2_align:
 
 rule hisat2_sort:
     input:
-        aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
+        aligned=OUTDIR + "/mapped/hisat2/{sample}/{sample}.bam"
     output:
         sortedCoord=OUTDIR + "/mapped/hisat2/{sample}/Aligned.sortedByCoord.out.bam"
     log:

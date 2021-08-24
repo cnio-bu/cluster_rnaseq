@@ -10,8 +10,14 @@ outdir: ''
 # path to the logs directory
 logdir: ''
 
+## ALIGNER ##
 # 0 = STAR, 1 = SALMON, 2 = HISAT2
 aligner: 0
+
+## QUANTIFIER ##
+# 0 = HTSEQ, 1 = FEATURECOUNTS
+quantifier: 1
+
 
 # genomic reference sequences and annotations for aligners and quantifiers
 ref:
@@ -21,8 +27,9 @@ ref:
         fasta: "/my/genome.fasta"
         # STAR aligner index path (auto generated if not already present)
         # Deafult: Cluster's shared index
-        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a/"
+        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a"
         star_index: "/my/genome_idx"
+    
     salmon: 
        # salmon transcriptome: .fa.gz
         transcriptome: "/path/to/salmon/transcriptome"
@@ -30,13 +37,15 @@ ref:
         genome_assembly: "/path/to/salmon/genome_assembly"
         # Salmon aligner index path (auto generated if not already present)
         # Deafult: Cluster's shared index
-        salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.0/"
+        #salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.2"
+        salmon_index: "/my/genome_idx"
+    
     hisat2:
+        annotation: "/my/annotation.gtf"
         # fasta file with transcripts
         fasta: "/my/genome.fasta"
         # HISAT2 aligner index path (auto generated if not already present)
         hisat2_index: "/my/genome_idx"
-        annotation: "/my/annotation.gtf"
 
 
 parameters:
@@ -61,6 +70,11 @@ parameters:
         mode: "-m union"
         # Strandness: "yes", "no" or "reverse" (default: yes)
         strandedness: "-s yes"
+
+    featureCounts:
+        extra: ""
+        # Strandness: 0 = "unstranded", 1 = "stranded", 2 = "reversely stranded" (default: 0)
+        strandedness: "-s 1"
 
     deseq2:
         # path or URL to design matrix
@@ -121,10 +135,15 @@ resources:
         walltime: 10
         
     htseq_count:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  64000
+        walltime: 120
 
+    featureCounts:
+        threads: 8
+        mem:  64000
+        walltime: 120
+    
     salmon_matrix_from_quants:
         threads: 1
         mem: 4096
@@ -133,7 +152,7 @@ resources:
     salmon_index:
         threads: 32
         mem: 64000
-        walltime: 60
+        walltime: 180
 
     star_index:
         threads: 8

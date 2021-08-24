@@ -4,7 +4,7 @@ rule generate_decoy_sequences:
     input:
         genome=config['ref']['salmon']['genome_assembly']
     output:
-        decoys="/".join(config["ref"]["salmon"]["salmon_index"].split('/')[:-1])+"/decoys.txt"
+        decoys=temp(config["outdir"]+"/decoys.txt")
     resources:
         walltime=1
     shell: 
@@ -19,7 +19,7 @@ rule build_gentrome:
         genome=config['ref']['salmon']['genome_assembly'],
         transcriptome=config['ref']['salmon']['transcriptome']
     output:
-        gentrome="/".join(config["ref"]["salmon"]["salmon_index"].split('/')[:-1])+"/gentrome.fa.gz"
+        gentrome=temp(config["outdir"]+"/gentrome.fa.gz")
     resources:
         walltime=1
     shell:
@@ -39,6 +39,8 @@ rule salmon_index:
         walltime=get_resource('salmon_index', 'walltime')
     params:
         gencode = IS_GENCODE # Dirty, but necessary. See Snakefile.
+    log:
+        f"{LOGDIR}/salmon_index/index.log"
     conda:
         '../envs/aligners.yaml'
     shell:
