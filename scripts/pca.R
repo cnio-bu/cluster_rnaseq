@@ -25,7 +25,7 @@ vsd <- readRDS(vsd)
 
 # Get variables to plot by from design
 variables <- unlist(str_split(design, pattern = "\\*|:|\\+"))
-variables <- str_trim(str_remove(variables, "~"))
+variables <- rev(str_trim(str_remove(variables, "~")))
 
 # colData
 coldata <- as.data.frame(colData(vsd))
