@@ -38,7 +38,8 @@ properties:
                         type: string
                     genome_assembly:
                         type: string
-                    salmon_index: string
+                    salmon_index: 
+                        type: string
             
             hisat2:
                 type: object
