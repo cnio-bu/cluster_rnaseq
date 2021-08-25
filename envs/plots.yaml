@@ -6,7 +6,10 @@ channels:
   - defaults
 dependencies:
   - bioconductor-deseq2=1.30.1
-  - r-scales 
+  - r-scales
+  - r-stringr
+  - r-tidyr
+  - r-dplyr
   - r-ggplot2
   - r-ggrepel
   - r-patchwork
