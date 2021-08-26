@@ -78,12 +78,14 @@ def get_reference_level(x):
     	reference = sorted(levels)[0]
     return reference
 
-def get_variable_interest(design):
-    '''
-    Get the variable of interest for differential expression (the last variable). 
-    '''
-    split_covariates = list(filter(None, re.split("[ \+\*:~]", design)))
-    return split_covariates[-1]
+def get_covariates(design):
+	'''
+	Get the covariates and the variable of interest (the last one) for differential expression.
+	'''
+	covariates = list(filter(None, re.split("[ \+\*:~]", design)))
+	variable_interest = covariates[-1]
+	covariates = list(set(covariates))
+	return {"covariates": covariates, "variable_interest": variable_interest}
 
 #### LOAD SAMPLES TABLES ###
 
@@ -117,7 +119,8 @@ designmatrix = designmatrix.apply(lambda row: [str(x).removeprefix("*") \
                                               for x in row])
 
 #### Get column of interest for differential expression
-var_interest = get_variable_interest(config["parameters"]["deseq2"]["design"])
+var_info = get_covariates(config["parameters"]["deseq2"]["design"])
+var_interest = var_info["variable_interest"]
 
 #### Contrasts ####
 ref_interest = ref_levels[var_interest]
