@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 import pandas as pd
 import numpy as np
 from snakemake.utils import validate, min_version
@@ -79,12 +80,10 @@ def get_reference_level(x):
 
 def get_variable_interest(design):
     '''
-    Get the variable of interest for differential expression (variable after "~"). 
+    Get the variable of interest for differential expression (the last variable). 
     '''
-    split_covariates = [x.split("*") for x in design.split("+")]
-    strip_covariates = [item.strip("~").strip(" ") for sublist in \
-                        split_covariates for item in sublist]
-    return strip_covariates[0]
+    split_covariates = list(filter(None, re.split("[ \+\*:~]", design)))
+    return split_covariates[-1]
 
 #### LOAD SAMPLES TABLES ###
 
