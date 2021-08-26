@@ -121,6 +121,7 @@ designmatrix = designmatrix.apply(lambda row: [str(x).removeprefix("*") \
 #### Get column of interest for differential expression
 var_info = get_covariates(config["parameters"]["deseq2"]["design"])
 var_interest = var_info["variable_interest"]
+covariates = var_info["covariates"]
 
 #### Contrasts ####
 ref_interest = ref_levels[var_interest]
@@ -131,6 +132,14 @@ contrasts = [(z + "_vs_" + ref_interest, [z, ref_interest]) \
 contrasts = {key: value for (key, value) in contrasts}
 allSamples = {"allSamples": list(set([ref_interest] + rest_levels))}
 allSamples.update(contrasts)
+
+### Batch correction (for plotting PCAs and correlations)
+filesuffix = [""]
+if len(covariates) > 1:
+	filesuffix += ["_batchCorrected"]
+	batch = [x for x in covariates if x != var_interest]
+else:
+	batch = None
 
 #### Load rules ####
 include: 'rules/common.smk'
