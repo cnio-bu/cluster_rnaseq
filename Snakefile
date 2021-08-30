@@ -166,6 +166,8 @@ def get_all_input():
 			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix)
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_pca{{fsuffix}}.png", \
 			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix)
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_MAplot.{{pext}}", \
+			               contrast=contrasts.keys(), pext = ["pdf", "png"])
 	return all_input
 
 
