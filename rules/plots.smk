@@ -57,3 +57,24 @@ rule distance:
         "../envs/plots.yaml"
     script: 
         "../scripts/distances.R"
+
+rule expression_heatmap:
+    input:
+        normalized_counts=rules.deseq2_init.output.normalized_counts,
+        diffexp=rules.deseq2_diffexp.output.tsv
+    output:
+        pdf=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_topbottomDEgenes.pdf",
+        png=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_topbottomDEgenes.png"
+    threads:
+        get_resource("expression_heatmap", "threads")
+    resources:
+        mem=get_resource("expression_heatmap", "mem"),
+        walltime=get_resource("expression_heatmap", "walltime")
+    params:
+        levels=lambda wildcards: contrasts[wildcards.contrast],
+        designmatrix=config['parameters']['deseq2']['designmatrix']
+    log: f"{LOGDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/topbottomDEgenes.log"
+    conda:
+        "../envs/plots.yaml"
+    script: 
+        "../scripts/topbottomDEgenes.R"

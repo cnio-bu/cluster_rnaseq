@@ -193,3 +193,8 @@ resources:
         threads: 1
         mem:  4096
         walltime: 10
+
+    expression_heatmap:
+        threads: 1
+        mem:  4096
+        walltime: 10

@@ -330,6 +330,16 @@ properties:
                         type: integer
                     walltime:
                         type: integer
+            
+            expression_heatmap:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
 
 required:
     - samples

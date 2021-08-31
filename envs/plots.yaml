@@ -10,6 +10,7 @@ dependencies:
   - r-ashr
   - r-scales
   - r-stringr
+  - r-tibble
   - r-tidyr
   - r-dplyr
   - r-ggplot2
