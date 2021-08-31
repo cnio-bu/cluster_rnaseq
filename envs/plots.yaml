@@ -16,6 +16,8 @@ dependencies:
   - r-ggrepel
   - r-ggpubr
   - r-patchwork
+  - bioconductor-complexheatmap
+  - r-rcolorbrewer
 
 
 

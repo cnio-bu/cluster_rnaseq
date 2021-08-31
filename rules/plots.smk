@@ -32,3 +32,18 @@ rule ma:
         "../envs/plots.yaml"
     script: 
         "../scripts/MAplot.R"
+
+rule distance:
+    input:
+        vst=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/dds_vst{{fsuffix}}.rds"
+    output:
+        pdf=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_dist{{fsuffix,.*}}.pdf",
+        png=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_dist{{fsuffix,.*}}.png"
+    params:
+        levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
+        designmatrix=config['parameters']['deseq2']['designmatrix']
+    log: f"{LOGDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/dist{{fsuffix,.*}}.log"
+    conda:
+        "../envs/plots.yaml"
+    script: 
+        "../scripts/distances.R"
