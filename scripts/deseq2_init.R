@@ -53,7 +53,7 @@ designmatrix <- designmatrix[colnames(counts), , drop = FALSE]
 # Set names to reference levels for each column in design matrix
 ref <- setNames(ref, colnames(designmatrix))
 
-# Remove '*' prefix from design matrix cells and convert all columns to factors
+# Remove '*' prefix from design matrix cells, convert all columns to factors
 # and relevel using ref
 designmatrix <- designmatrix %>% 
   mutate(across(everything(), factor_relevel, reference = ref))
