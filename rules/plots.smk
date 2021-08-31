@@ -4,11 +4,11 @@ rule pca:
     output:
         pdf=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_pca{{fsuffix,.*}}.pdf",
         png=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_pca{{fsuffix,.*}}.png"
-    #threads:
-    #    get_resource("deseq2_diffexp", "threads")
-    #resources:
-    #    mem=get_resource("deseq2_diffexp", "mem"),
-    #    walltime=get_resource("deseq2_diffexp", "walltime")
+    threads:
+        get_resource("pca", "threads")
+    resources:
+        mem=get_resource("pca", "mem"),
+        walltime=get_resource("pca", "walltime")
     params:
         levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
         design=config['parameters']['deseq2']['design']
@@ -24,6 +24,11 @@ rule ma:
     output:
         pdf=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_MAplot.pdf",
         png=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_MAplot.png"
+    threads:
+        get_resource("ma", "threads")
+    resources:
+        mem=get_resource("ma", "mem"),
+        walltime=get_resource("ma", "walltime")
     params:
         condition=var_interest,
         levels=lambda wildcards: contrasts[wildcards.contrast]
@@ -39,6 +44,11 @@ rule distance:
     output:
         pdf=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_dist{{fsuffix,.*}}.pdf",
         png=f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_dist{{fsuffix,.*}}.png"
+    threads:
+        get_resource("distance", "threads")
+    resources:
+        mem=get_resource("distance", "mem"),
+        walltime=get_resource("distance", "walltime")
     params:
         levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
         designmatrix=config['parameters']['deseq2']['designmatrix']

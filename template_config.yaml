@@ -178,3 +178,18 @@ resources:
         threads: 2
         mem:  4096
         walltime: 10
+    
+    pca:
+        threads: 1
+        mem:  4096
+        walltime: 10
+    
+    ma:
+        threads: 1
+        mem:  4096
+        walltime: 10
+
+    distance:
+        threads: 1
+        mem:  4096
+        walltime: 10
