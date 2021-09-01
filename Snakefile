@@ -159,20 +159,20 @@ def get_all_input():
 	if chosen_aligner == "salmon":
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_topbottomDEgenes.{{pext}}", \
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
 			               contrast=contrasts.keys(), pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
 			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_MAplot.{{pext}}", \
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
 			               contrast=contrasts.keys(), pext = ["pdf", "png"])
 	else:
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_topbottomDEgenes.{{pext}}", \
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
 			               contrast=contrasts.keys(), pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
 			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_MAplot.{{pext}}", \
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
 			               contrast=contrasts.keys(), pext = ["pdf", "png"])
 	return all_input
 
