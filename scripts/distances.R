@@ -3,9 +3,9 @@ sink(log)
 sink(log, type = "message")
 
 suppressMessages(library("DESeq2"))
-suppressMessages(library("stringr"))
-suppressMessages(library("scales"))
 suppressMessages(library("dplyr"))
+#suppressMessages(library("stringr"))
+suppressMessages(library("scales"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("ComplexHeatmap"))
 
@@ -14,20 +14,16 @@ vsd <- snakemake@input[["vst"]]
 
 ## SNAKEMAKE PARAMS ##
 levels <- snakemake@params[["levels"]]
-designmatrix <- snakemake@params[["designmatrix"]]
 
 ## CODE ##
 # Get vst
 vsd <- readRDS(vsd)
 
-# Get design matrix
-designmatrix <- read.table(designmatrix, header = TRUE, row.names = 1)
-
-# Format design matrix condition
-designmatrix <- designmatrix %>% mutate(condition = gsub("^\\*", "", condition))
+# colData
+coldata <- as.data.frame(colData(vsd)) %>% select(-sizeFactor)
 
 # All levels
-all_levels <- levels_colors <- lapply(asplit(designmatrix, 2), 
+all_levels <- levels_colors <- lapply(asplit(coldata, 2), 
                                       function(x) unname(unique(x)))
 
 # Assign a color to each level of each variable
@@ -40,8 +36,8 @@ for (n in names(levels_colors)) {
 }
 
 # Subset the sample names according to the specified levels
-designmatrix <- designmatrix %>% filter(condition %in% levels)
-samples <- rownames(designmatrix)
+coldata <- coldata %>% filter(condition %in% levels)
+samples <- rownames(coldata)
 
 # Euclidean sample distances
 sampleDist <- as.matrix(dist(t(assay(vsd[, samples])), method = "euclidean"))
@@ -52,10 +48,10 @@ colors <- colorRampPalette(rev(brewer.pal(9, "Blues")))(255)
 # Heatmaps
 pdf(snakemake@output[["pdf"]], width = 9, height = 7)
 pheatmap(sampleDist, name = "Euclidean Distance", color = colors, 
-         annotation_col = designmatrix, annotation_colors = levels_colors)
+         annotation_col = coldata, annotation_colors = levels_colors)
 dev.off()
 
 png(snakemake@output[["png"]], width = 9, height = 7, units = "in", res = 600)
 pheatmap(sampleDist, name = "Euclidean Distance", color = colors,
-         annotation_col = designmatrix, annotation_colors = levels_colors)
+         annotation_col = coldata, annotation_colors = levels_colors)
 dev.off()

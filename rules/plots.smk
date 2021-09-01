@@ -107,8 +107,7 @@ rule distance:
         mem=get_resource("distance", "mem"),
         walltime=get_resource("distance", "walltime")
     params:
-        levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
-        designmatrix=config['parameters']['deseq2']['designmatrix']
+        levels=lambda wildcards: allSamples[wildcards.ALLcontrast]
     log: get_distance_log()
     conda:
         "../envs/plots.yaml"
