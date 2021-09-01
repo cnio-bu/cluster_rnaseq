@@ -4,7 +4,6 @@ sink(log, type = "message")
 
 suppressMessages(library("DESeq2"))
 suppressMessages(library("dplyr"))
-#suppressMessages(library("stringr"))
 suppressMessages(library("scales"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("ComplexHeatmap"))
