@@ -1,4 +1,4 @@
-name: deseq2
+name: plots
 channels:
   - conda-forge
   - bioconda
