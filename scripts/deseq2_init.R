@@ -2,7 +2,6 @@ log <- file(snakemake@log[[1]], open = "wt")
 sink(log)
 sink(log, type = "message")
 
-suppressMessages(library("dplyr"))
 suppressMessages(library("DESeq2"))
 suppressMessages(library("tidyr"))
 suppressMessages(library("dplyr"))
