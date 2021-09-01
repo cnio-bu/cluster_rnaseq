@@ -39,6 +39,10 @@ for (n in names(levels_colors)) {
 coldata <- coldata %>% filter(condition %in% levels)
 samples <- rownames(coldata)
 
+levels_colors <- setNames(lapply(names(levels_colors), function(y) {
+  levels_colors[[y]][names(levels_colors[[y]]) %in% unique(coldata[[y]])]
+}), names(levels_colors))
+
 # Euclidean sample distances
 sampleDist <- as.matrix(dist(t(assay(vsd[, samples])), method = "euclidean"))
 
