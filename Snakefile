@@ -130,8 +130,12 @@ rest_levels = [y for y in designmatrix[var_interest].unique() \
 contrasts = [(z + "_vs_" + ref_interest, [z, ref_interest]) \
             for z in rest_levels]
 contrasts = {key: value for (key, value) in contrasts}
-allSamples = {"allSamples": list(set([ref_interest] + rest_levels))}
-allSamples.update(contrasts)
+
+if len(rest_levels) > 1:
+	allSamples = {"allSamples": list(set([ref_interest] + rest_levels))}
+	allSamples.update(contrasts)
+else:
+	allSamples = contrasts
 
 ### Batch correction (for plotting PCAs and correlations)
 filesuffix = [""]
