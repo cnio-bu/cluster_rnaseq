@@ -78,12 +78,14 @@ def get_reference_level(x):
     	reference = sorted(levels)[0]
     return reference
 
-def get_variable_interest(design):
-    '''
-    Get the variable of interest for differential expression (the last variable). 
-    '''
-    split_covariates = list(filter(None, re.split("[ \+\*:~]", design)))
-    return split_covariates[-1]
+def get_covariates(design):
+	'''
+	Get the covariates and the variable of interest (the last one) for differential expression.
+	'''
+	covariates = list(filter(None, re.split("[ \+\*:~]", design)))
+	variable_interest = covariates[-1]
+	covariates = list(set(covariates))
+	return {"covariates": covariates, "variable_interest": variable_interest}
 
 #### LOAD SAMPLES TABLES ###
 
@@ -117,7 +119,9 @@ designmatrix = designmatrix.apply(lambda row: [str(x).removeprefix("*") \
                                               for x in row])
 
 #### Get column of interest for differential expression
-var_interest = get_variable_interest(config["parameters"]["deseq2"]["design"])
+var_info = get_covariates(config["parameters"]["deseq2"]["design"])
+var_interest = var_info["variable_interest"]
+covariates = var_info["covariates"]
 
 #### Contrasts ####
 ref_interest = ref_levels[var_interest]
@@ -127,6 +131,20 @@ contrasts = [(z + "_vs_" + ref_interest, [z, ref_interest]) \
             for z in rest_levels]
 contrasts = {key: value for (key, value) in contrasts}
 
+if len(rest_levels) > 1:
+	allSamples = {"allSamples": list(set([ref_interest] + rest_levels))}
+	allSamples.update(contrasts)
+else:
+	allSamples = contrasts
+
+### Batch correction (for plotting PCAs and correlations)
+filesuffix = [""]
+if len(covariates) > 1:
+	filesuffix += ["_batchCorrected"]
+	batch = [x for x in covariates if x != var_interest]
+else:
+	batch = None
+
 #### Load rules ####
 include: 'rules/common.smk'
 include: 'rules/qc.smk'
@@ -135,6 +153,7 @@ include: 'rules/index.smk'
 include: 'rules/align.smk'
 include: 'rules/quantification.smk'
 include: 'rules/deseq2.smk'
+include: 'rules/plots.smk'
 
 
 def get_all_input():
@@ -144,9 +163,21 @@ def get_all_input():
 	if chosen_aligner == "salmon":
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
+			               contrast=contrasts.keys(), pext = ["pdf", "png"])
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
+			               contrast=contrasts.keys(), pext = ["pdf", "png"])
 	else:
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
 		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
+			               contrast=contrasts.keys(), pext = ["pdf", "png"])
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
+		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
+			               contrast=contrasts.keys(), pext = ["pdf", "png"])
 	return all_input
 
 

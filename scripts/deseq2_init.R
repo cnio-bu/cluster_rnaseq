@@ -2,8 +2,10 @@ log <- file(snakemake@log[[1]], open = "wt")
 sink(log)
 sink(log, type = "message")
 
-suppressMessages(library("dplyr"))
 suppressMessages(library("DESeq2"))
+suppressMessages(library("tidyr"))
+suppressMessages(library("dplyr"))
+suppressMessages(library("limma"))
 
 ## PARALLELIZATION ##
 parallel <- FALSE
@@ -20,7 +22,8 @@ counts <- snakemake@input[["counts"]]
 samples <- snakemake@params[["samples"]]
 designmatrix <- snakemake@params[["designmatrix"]]
 ref <- snakemake@params[["ref_levels"]]
-design <- as.formula(snakemake@params[["design"]])
+design <- snakemake@params[["design"]]
+batch_variables <- snakemake@params[["batch"]]
 
 ## FUNCTION ##
 factor_relevel <- function(x, reference) {
@@ -49,13 +52,14 @@ designmatrix <- designmatrix[colnames(counts), , drop = FALSE]
 # Set names to reference levels for each column in design matrix
 ref <- setNames(ref, colnames(designmatrix))
 
-# Remove '*' prefix from design matrix cells and convert all columns to factors
+# Remove '*' prefix from design matrix cells, convert all columns to factors
 # and relevel using ref
 designmatrix <- designmatrix %>% 
   mutate(across(everything(), factor_relevel, reference = ref))
 
 # DESeq2 from htseqCount output
-dds <- DESeqDataSetFromMatrix(counts, colData = designmatrix, design = design)
+dds <- DESeqDataSetFromMatrix(counts, colData = designmatrix, 
+                              design = as.formula(design))
 
 # Pre-filtering
 keep <- rowSums(counts(dds)) >= 10
@@ -74,4 +78,16 @@ vsd <- vst(dds, blind = FALSE)
 saveRDS(dds, file = snakemake@output[["dds"]])
 write.table(norm_counts, file = snakemake@output[["normalized_counts"]], 
             sep = "\t", quote = FALSE, col.names = NA)
-saveRDS(vsd, file = snakemake@output[["vst"]])
+saveRDS(vsd, file = snakemake@output[["vst"]][1])
+
+# If there is a batch, perform batch correction
+if (!is.null(batch_variables)) {
+  ### colData
+  coldata <- as.data.frame(colData(vsd))
+  
+  # Batch correct the vst
+  batch <- coldata %>% unite("combined", all_of(batch_variables), sep = ":") %>%
+    select(combined) %>% pull
+  assay(vsd) <- removeBatchEffect(assay(vsd), batch = batch)
+  saveRDS(vsd, file = snakemake@output[["vst"]][2])
+}

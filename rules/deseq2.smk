@@ -12,11 +12,11 @@ def get_init_output():
     if chosen_aligner == "salmon":
         dds = f"{OUTDIR}/deseq2/{chosen_aligner}/dds.rds"
         normalized_counts = f"{OUTDIR}/deseq2/{chosen_aligner}/normalizedcounts.tsv"
-        vst = f"{OUTDIR}/deseq2/{chosen_aligner}/dds_vst.rds"
+        vst = expand(f"{OUTDIR}/deseq2/{chosen_aligner}/dds_vst{{fsuffix}}.rds", fsuffix = filesuffix)
     else:
         dds = f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/dds.rds"
         normalized_counts = f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/normalizedcounts.tsv"
-        vst = f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/dds_vst.rds"
+        vst = expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/dds_vst{{fsuffix}}.rds", fsuffix = filesuffix)
     return dds, normalized_counts, vst
 
 
@@ -65,7 +65,8 @@ rule deseq2_init:
         samples=config['samples'],
         designmatrix=config['parameters']['deseq2']['designmatrix'],
         ref_levels=ref_levels.to_list(),
-        design=config['parameters']['deseq2']['design']
+        design=config['parameters']['deseq2']['design'],
+        batch=batch
     log: get_init_log()
     conda:
         "../envs/deseq2.yaml"
