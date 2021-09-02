@@ -44,6 +44,7 @@ plotPCA.3 <- function(object, intgroup = "condition", ntop = 500,
                                    color = "group", label = "name")) + 
     geom_point(size = 3) + xlab(xlab) + ylab(ylab) +
     geom_text_repel(size = 3, force = 1.5) + 
-    guides(color = guide_legend(title = intgroup)) + theme_minimal()
+    guides(color = guide_legend(title = paste(intgroup, collapse = ":"))) + 
+    theme_minimal()
   return(p)
 }
