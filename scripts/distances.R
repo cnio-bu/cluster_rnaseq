@@ -7,12 +7,14 @@ suppressMessages(library("dplyr"))
 suppressMessages(library("scales"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("ComplexHeatmap"))
+source("scripts/levelFunctions.R")
 
 ## SNAKEMAKE I/O ##
 vsd <- snakemake@input[["vst"]]
 
 ## SNAKEMAKE PARAMS ##
 levels <- snakemake@params[["levels"]]
+ref <- snakemake@params[["ref_levels"]]
 
 ## CODE ##
 # Get vst
@@ -21,18 +23,15 @@ vsd <- readRDS(vsd)
 # colData
 coldata <- as.data.frame(colData(vsd)) %>% select(-sizeFactor)
 
-# All levels
-all_levels <- levels_colors <- lapply(asplit(coldata, 2), 
-                                      function(x) unname(unique(x)))
+# Set names to reference levels for each column in coldata
+ref <- setNames(ref, colnames(coldata))
+
+# Convert all coldata columns to factors and relevel
+coldata <- coldata %>% 
+  mutate(across(everything(), factor_relevel, reference = ref))
 
 # Assign a color to each level of each variable
-all_levels_colors <- hue_pal()(length(unlist(all_levels)))
-i <- 1
-for (n in names(levels_colors)) {
-  x <- levels_colors[[n]]
-  levels_colors[[n]] <- setNames(all_levels_colors[i:(i - 1 + length(x))], x)
-  i <- length(x) + 1
-}
+levels_colors <- color_levels(coldata)
 
 # Subset the sample names according to the specified levels
 coldata <- coldata %>% filter(condition %in% levels)

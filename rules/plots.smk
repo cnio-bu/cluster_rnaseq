@@ -68,7 +68,8 @@ rule pca:
         walltime=get_resource("pca", "walltime")
     params:
         levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
-        design=config['parameters']['deseq2']['design']
+        design=config['parameters']['deseq2']['design'],
+        ref_levels=ref_levels.to_list()
     log: get_pca_log()
     conda:
         "../envs/plots.yaml"
@@ -107,7 +108,8 @@ rule distance:
         mem=get_resource("distance", "mem"),
         walltime=get_resource("distance", "walltime")
     params:
-        levels=lambda wildcards: allSamples[wildcards.ALLcontrast]
+        levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
+        ref_levels=ref_levels.to_list()
     log: get_distance_log()
     conda:
         "../envs/plots.yaml"
@@ -128,7 +130,8 @@ rule expression_heatmap:
         walltime=get_resource("expression_heatmap", "walltime")
     params:
         levels=lambda wildcards: contrasts[wildcards.contrast],
-        designmatrix=config['parameters']['deseq2']['designmatrix']
+        designmatrix=config['parameters']['deseq2']['designmatrix'],
+        ref_levels=ref_levels.to_list()
     log: get_contrast_log(plot="topbottomDEgenes")
     conda:
         "../envs/plots.yaml"

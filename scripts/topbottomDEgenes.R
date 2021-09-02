@@ -2,12 +2,13 @@ log <- file(snakemake@log[[1]], open = "wt")
 sink(log)
 sink(log, type = "message")
 
-suppressMessages(library("dplyr"))
 suppressMessages(library("plyr"))
+suppressMessages(library("dplyr"))
 suppressMessages(library("tibble"))
 suppressMessages(library("scales"))
 suppressMessages(library("RColorBrewer"))
 suppressMessages(library("ComplexHeatmap"))
+source("scripts/levelFunctions.R")
 
 ## SNAKEMAKE I/O ##
 norm_counts <- snakemake@input[["normalized_counts"]]
@@ -16,7 +17,8 @@ diffexp <- snakemake@input[["diffexp"]]
 ## SNAKEMAKE PARAMS ##
 levels <- snakemake@params[["levels"]]
 designmatrix <- snakemake@params[["designmatrix"]]
-
+ref <- snakemake@params[["ref_levels"]]
+  
 ## CODE ##
 # Get normalized counts
 norm_counts <- read.table(norm_counts)
@@ -30,21 +32,27 @@ designmatrix <- read.table(designmatrix, header = TRUE, row.names = 1)
 # Keep only significantly expressed genes
 diffexp <- diffexp %>% rownames_to_column %>% filter(padj < 0.05)
 
+# Subset the design matrix keeping only samples to be tested
+designmatrix <- designmatrix[colnames(norm_counts), , drop = FALSE]
 
-# Format design matrix condition
+# Set names to reference levels for each column in design matrix
+ref <- setNames(ref, colnames(designmatrix))
+
+# Remove '*' prefix from design matrix cells, convert all columns to factors
+# and relevel
 designmatrix <- designmatrix %>% 
-  mutate(condition = gsub("^\\*", "", condition)) %>% select(condition)
+  mutate(across(everything(), factor_relevel, reference = ref))
 
-# All condition's levels
-all_levels <- designmatrix %>% select(condition) %>% unique %>% pull
-
-# Assign a color to each level
-levels_colors <- setNames(hue_pal()(length(all_levels)), all_levels)
-levels_colors <- list(condition = levels_colors)
+# Assign a color to each level of each variable
+levels_colors <- color_levels(designmatrix)
 
 # Subset the sample names according to the specified levels
-designmatrix <- designmatrix %>% filter(condition %in% levels)
+designmatrix <- designmatrix %>% filter(condition %in% levels) %>% 
+  select(condition)
 samples <- rownames(designmatrix)
+
+levels_colors <- list(condition = levels_colors[["condition"]]
+                      [names(levels_colors[["condition"]]) %in% levels])
 
 # Get top 25 and bottom 25 DE genes
 top <- diffexp %>% arrange(desc(log2FoldChange)) %>% 

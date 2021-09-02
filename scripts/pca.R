@@ -4,13 +4,14 @@ sink(log, type = "message")
 
 suppressMessages(library("DESeq2"))
 suppressMessages(library("stringr"))
-suppressMessages(library("tidyr"))
 suppressMessages(library("dplyr"))
+suppressMessages(library("tidyr"))
 suppressMessages(library("scales"))
 suppressMessages(library("ggplot2"))
 suppressMessages(library("ggrepel"))
 suppressMessages(library("patchwork"))
 source("scripts/plotPCA.3.R")
+source("scripts/levelFunctions.R")
 
 ## SNAKEMAKE I/O ##
 vsd <- snakemake@input[["vst"]]
@@ -18,6 +19,7 @@ vsd <- snakemake@input[["vst"]]
 ## SNAKEMAKE PARAMS ##
 levels <- snakemake@params[["levels"]]
 design <- snakemake@params[["design"]]
+ref <- snakemake@params[["ref_levels"]]
 
 ## CODE ##
 # Get vst
@@ -28,11 +30,18 @@ variables <- unlist(str_split(design, pattern = "\\*|:|\\+"))
 variables <- rev(str_trim(str_remove(variables, "~")))
 
 # colData
-coldata <- as.data.frame(colData(vsd))
+coldata <- as.data.frame(colData(vsd)) %>% select(-sizeFactor)
+
+# Set names to reference levels for each column in coldata
+ref <- setNames(ref, colnames(coldata))
+
+# Convert all coldata columns to factors and relevel
+coldata <- coldata %>% 
+  mutate(across(everything(), factor_relevel, reference = ref))
 
 # Get variables' all combined levels
-all_levels <- coldata %>% unite("combined", all_of(variables), sep = ":") %>% 
-  select(combined) %>% pull %>% unique
+all_levels <- expand.grid(rev(lapply(coldata, levels))) %>% 
+  unite("combined", all_of(variables), sep = ":") %>% select(combined) %>% pull
 
 # Assign a color to each level
 colors <- setNames(hue_pal()(length(all_levels)), all_levels)
