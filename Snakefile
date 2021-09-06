@@ -78,6 +78,7 @@ def get_reference_level(x):
     	reference = sorted(levels)[0]
     return reference
 
+
 def get_covariates(design):
 	'''
 	Get the covariates and the variable of interest (the last one) for differential expression.
@@ -105,6 +106,10 @@ chosen_aligner = get_aligner(int(config['aligner']))
 
 #### Get quantifier ####
 chosen_quantifier = get_quantifier(int(config['quantifier']))
+
+#### Auxiliar variable to generate the paths after quantification, due to salmon does not need to 
+#### quantify after align while STAR and hisat2 do, so they need an extra folder in the results.
+deseq_path = f"{chosen_aligner}" if chosen_aligner == "salmon" else f"{chosen_aligner}/{chosen_quantifier}"
 
 #### Subset the design matrix keeping only samples for DEA ####
 DEAsamples = samples[samples["diffexp"]].index
@@ -160,24 +165,14 @@ def get_all_input():
 
 	all_input= [f"{OUTDIR}/qc/multiqc_report.html",	f"{OUTDIR}/qc_concat/multiqc_report.html"]
 
-	if chosen_aligner == "salmon":
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
-			               contrast=contrasts.keys(), pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
-			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
-			               contrast=contrasts.keys(), pext = ["pdf", "png"])
-	else:
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
-			               contrast=contrasts.keys(), pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
-			               ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
-		all_input += expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{chosen_quantifier}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
-			               contrast=contrasts.keys(), pext = ["pdf", "png"])
+	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
+						contrast=contrasts.keys(), pext = ["pdf", "png"])
+	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+						ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
+	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
+						contrast=contrasts.keys(), pext = ["pdf", "png"])
 	return all_input
 
 

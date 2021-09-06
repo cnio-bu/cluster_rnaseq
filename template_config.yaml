@@ -51,7 +51,7 @@ ref:
 parameters:
     trimming:
             adapters: "resources/trimming/adapters.fa"
-            extra: "-Xmx2g ktrim=r k=23 mink=11 hdist=1"
+            extra: " ktrim=r k=23 mink=11 hdist=1"
 
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html
@@ -100,14 +100,14 @@ resources:
         walltime: 10
 
     trim_adapters_single_end:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  8192
+        walltime: 60
         
     trim_adapters_paired_end:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  8192
+        walltime: 60
  
     salmon_quant:
         threads: 20
@@ -140,6 +140,11 @@ resources:
         walltime: 120
 
     featureCounts:
+        threads: 8
+        mem:  64000
+        walltime: 120
+    
+    fcounts_count_matrix:
         threads: 8
         mem:  64000
         walltime: 120
