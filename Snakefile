@@ -161,21 +161,122 @@ include: 'rules/deseq2.smk'
 include: 'rules/plots.smk'
 
 
-def get_all_input():
+def get_index_input():
 
-	all_input= [f"{OUTDIR}/qc/multiqc_report.html",	f"{OUTDIR}/qc_concat/multiqc_report.html"]
+	index_input = config["ref"][chosen_aligner][f"{chosen_aligner}_index"]
+	return index_input
 
-	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
-	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
-	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
+
+def get_trimming_input():
+	
+	#trimming_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	trimming_input = []
+
+	for sample in samples['sample']:
+		if is_single_end(sample):
+			trimming_input += f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"
+		else:
+			trimming_input += expand(f"{OUTDIR}/trimmed/{sample}/{sample}_R{{strand}}.fastq.gz", strand=[1,2])
+	
+	return trimming_input
+
+
+def get_alignment_input():
+
+	#alignment_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	alignment_input = []
+
+	if chosen_aligner == "salmon":
+		alignment_input += expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf", sample=samples['sample'])
+	else:
+		alignment_input += expand(f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam", sample=samples['sample'])
+	
+	return alignment_input
+
+
+def get_quantification_input():
+
+	#quantification_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	quantification_input = []
+	
+	quantification_input += [f"{OUTDIR}/deseq2/{deseq_path}/counts.tsv"]
+	
+	return quantification_input
+
+
+def get_diffexp_input():
+
+	#diffexp_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	diffexp_input = []
+
+	diffexp_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+	diffexp_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	
+	return diffexp_input
+
+
+def get_plots_input():
+
+	#plots_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	plots_input = []
+	
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
 						contrast=contrasts.keys(), pext = ["pdf", "png"])
-	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
 						ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
-	all_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
 						contrast=contrasts.keys(), pext = ["pdf", "png"])
-	return all_input
+	return plots_input
 
+
+
+# TARGET RULES
 
 rule all:
 	input:
-		get_all_input()
+		get_plots_input()
+
+
+rule index:
+	input:
+		get_index_input()
+
+
+# Check files' MD5 and creates a MultiQC report using the fastqc's reports for original files
+rule files_qc:
+	input:
+		f"{OUTDIR}/multiqc/multiqc_files_report.html"
+
+rule trimming:
+	input:
+		get_trimming_input()
+
+
+rule alignment:
+	input:
+		get_alignment_input()
+
+
+rule quantification:
+	input:
+		get_quantification_input()
+
+
+rule diffexp:
+	input:
+		get_diffexp_input()
+
+
+rule plots:
+	input:
+		get_plots_input()
+
+
+# Creates a MultiQC report for all files that it founds, mixing all aligners or quantifiers that has been ran
+rule multiqc_all:
+	input:
+		f"{OUTDIR}/multiqc/multiqc_all_report.html"
+
+

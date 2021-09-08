@@ -28,8 +28,8 @@ rule build_gentrome:
 
 rule salmon_index:
     input:
-        gentrome=rules.build_gentrome.output.gentrome,
-        decoys=rules.generate_decoy_sequences.output.decoys
+        gentrome=ancient(rules.build_gentrome.output.gentrome),
+        decoys=ancient(rules.generate_decoy_sequences.output.decoys)
     output:
         directory(config["ref"]["salmon"]["salmon_index"])
     threads:
@@ -50,8 +50,8 @@ rule salmon_index:
 ## STAR RULES
 rule star_index:
     input:
-        fasta = config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-",
-        gtf   = config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-"
+        fasta = ancient(config["ref"]["star"]["fasta"] if config["ref"]["star"]["fasta"] else "-"),
+        gtf   = ancient(config["ref"]["star"]["annotation"] if config["ref"]["star"]["annotation"] else "-")
     output:
         directory(config["ref"]["star"]["star_index"])
     threads: 
@@ -70,7 +70,7 @@ rule star_index:
 ## HISAT-2 RULES
 rule hisat2_index:
     input:
-        fasta = config["ref"]["hisat2"]["fasta"] if config["ref"]["hisat2"]["fasta"] else "-"
+        fasta = ancient(config["ref"]["hisat2"]["fasta"] if config["ref"]["hisat2"]["fasta"] else "-")
     output:
         directory(config["ref"]["hisat2"]["hisat2_index"])
     threads:

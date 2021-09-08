@@ -79,7 +79,7 @@ parameters:
     deseq2:
         # path or URL to design matrix
         designmatrix: "designmatrix.tsv"
-        design: "~condition"
+        design: "~date + condition"
 
 
 
