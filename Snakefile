@@ -1,5 +1,6 @@
 import glob
 import os
+import re
 import pandas as pd
 import numpy as np
 from snakemake.utils import validate, min_version
@@ -50,6 +51,17 @@ def get_aligner(chosen_aligner:int) -> str:
 	except KeyError:
 		print(f'Invalid aligner choice: {chosen_aligner}')
 		sys.exit(1)
+
+
+def get_quantifier(chosen_quantifier:int) -> str:
+
+	available_quantifiers = {0:'htseq', 1:'featureCounts'}
+	try:
+		return available_quantifiers[chosen_quantifier]
+	except KeyError:
+		print(f'Invalid quantifier choice: {chosen_quantifier}')
+		sys.exit(1)
+
 	
 def get_reference_level(x):
     '''
@@ -66,14 +78,15 @@ def get_reference_level(x):
     	reference = sorted(levels)[0]
     return reference
 
-def get_variable_interest(design):
-    '''
-    Get the variable of interest for differential expression (variable after "~"). 
-    '''
-    split_covariates = [x.split("*") for x in design.split("+")]
-    strip_covariates = [item.strip("~").strip(" ") for sublist in \
-                        split_covariates for item in sublist]
-    return strip_covariates[0]
+
+def get_covariates(design):
+	'''
+	Get the covariates and the variable of interest (the last one) for differential expression.
+	'''
+	covariates = list(filter(None, re.split("[ \+\*:~]", design)))
+	variable_interest = covariates[-1]
+	covariates = list(set(covariates))
+	return {"covariates": covariates, "variable_interest": variable_interest}
 
 #### LOAD SAMPLES TABLES ###
 
@@ -91,6 +104,13 @@ validate(designmatrix, schema="schemas/designmatrix.schema.yaml")
 #### Get aligner ####
 chosen_aligner = get_aligner(int(config['aligner']))
 
+#### Get quantifier ####
+chosen_quantifier = get_quantifier(int(config['quantifier']))
+
+#### Auxiliar variable to generate the paths after quantification, due to salmon does not need to 
+#### quantify after align while STAR and hisat2 do, so they need an extra folder in the results.
+deseq_path = f"{chosen_aligner}" if chosen_aligner == "salmon" else f"{chosen_aligner}/{chosen_quantifier}"
+
 #### Subset the design matrix keeping only samples for DEA ####
 DEAsamples = samples[samples["diffexp"]].index
 designmatrix = designmatrix.loc[DEAsamples,]
@@ -104,7 +124,9 @@ designmatrix = designmatrix.apply(lambda row: [str(x).removeprefix("*") \
                                               for x in row])
 
 #### Get column of interest for differential expression
-var_interest = get_variable_interest(config["parameters"]["deseq2"]["design"])
+var_info = get_covariates(config["parameters"]["deseq2"]["design"])
+var_interest = var_info["variable_interest"]
+covariates = var_info["covariates"]
 
 #### Contrasts ####
 ref_interest = ref_levels[var_interest]
@@ -114,6 +136,20 @@ contrasts = [(z + "_vs_" + ref_interest, [z, ref_interest]) \
             for z in rest_levels]
 contrasts = {key: value for (key, value) in contrasts}
 
+if len(rest_levels) > 1:
+	allSamples = {"allSamples": list(set([ref_interest] + rest_levels))}
+	allSamples.update(contrasts)
+else:
+	allSamples = contrasts
+
+### Batch correction (for plotting PCAs and correlations)
+filesuffix = [""]
+if len(covariates) > 1:
+	filesuffix += ["_batchCorrected"]
+	batch = [x for x in covariates if x != var_interest]
+else:
+	batch = None
+
 #### Load rules ####
 include: 'rules/common.smk'
 include: 'rules/qc.smk'
@@ -122,13 +158,125 @@ include: 'rules/index.smk'
 include: 'rules/align.smk'
 include: 'rules/quantification.smk'
 include: 'rules/deseq2.smk'
+include: 'rules/plots.smk'
+
+
+def get_index_input():
+
+	index_input = config["ref"][chosen_aligner][f"{chosen_aligner}_index"]
+	return index_input
+
+
+def get_trimming_input():
+	
+	#trimming_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	trimming_input = []
+
+	for sample in samples['sample']:
+		if is_single_end(sample):
+			trimming_input += f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"
+		else:
+			trimming_input += expand(f"{OUTDIR}/trimmed/{sample}/{sample}_R{{strand}}.fastq.gz", strand=[1,2])
+	
+	return trimming_input
+
+
+def get_alignment_input():
+
+	#alignment_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	alignment_input = []
+
+	if chosen_aligner == "salmon":
+		alignment_input += expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf", sample=samples['sample'])
+	else:
+		alignment_input += expand(f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam", sample=samples['sample'])
+	
+	return alignment_input
+
+
+def get_quantification_input():
+
+	#quantification_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	quantification_input = []
+	
+	quantification_input += [f"{OUTDIR}/deseq2/{deseq_path}/counts.tsv"]
+	
+	return quantification_input
+
+
+def get_diffexp_input():
+
+	#diffexp_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	diffexp_input = []
+
+	diffexp_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+	diffexp_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	
+	return diffexp_input
+
+
+def get_plots_input():
+
+	#plots_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	plots_input = []
+	
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_topbottomDEgenes.{{pext}}", \
+						contrast=contrasts.keys(), pext = ["pdf", "png"])
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/{{ALLcontrast}}_{{plot}}{{fsuffix}}.{{pext}}", \
+						ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
+	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
+						contrast=contrasts.keys(), pext = ["pdf", "png"])
+	return plots_input
+
+
+
+# TARGET RULES
 
 rule all:
 	input:
-		#f"{OUTDIR}/deseq2/salmon/counts.tsv"
-		f"{OUTDIR}/qc/multiqc_report.html",
-		f"{OUTDIR}/qc_concat/multiqc_report.html",
-		#expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-		#	  f"{{contrast}}_diffexp.xlsx", contrast=contrasts.keys()),
-		#expand(f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/" + \
-		#	  f"{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
+		get_plots_input()
+
+
+rule index:
+	input:
+		get_index_input()
+
+
+# Check files' MD5 and creates a MultiQC report using the fastqc's reports for original files
+rule files_qc:
+	input:
+		f"{OUTDIR}/multiqc/multiqc_files_report.html"
+
+rule trimming:
+	input:
+		get_trimming_input()
+
+
+rule alignment:
+	input:
+		get_alignment_input()
+
+
+rule quantification:
+	input:
+		get_quantification_input()
+
+
+rule diffexp:
+	input:
+		get_diffexp_input()
+
+
+rule plots:
+	input:
+		get_plots_input()
+
+
+# Creates a MultiQC report for all files that it founds, mixing all aligners or quantifiers that has been ran
+rule multiqc_all:
+	input:
+		f"{OUTDIR}/multiqc/multiqc_all_report.html"
+
+

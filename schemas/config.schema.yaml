@@ -15,6 +15,8 @@ properties:
         type: string
     aligner:
         type: integer
+    quantifier:
+        type: integer
 
     
     ref:
@@ -28,6 +30,7 @@ properties:
                         type: string
                     star_index:
                         type: string
+            
             salmon:
                 type: object
                 properties:
@@ -35,6 +38,9 @@ properties:
                         type: string
                     genome_assembly:
                         type: string
+                    salmon_index: 
+                        type: string
+            
             hisat2:
                 type: object
                 properties:
@@ -44,6 +50,7 @@ properties:
                         type: string
                     annotation:
                         type: string
+
 
     parameters:
         properties:
@@ -57,22 +64,30 @@ properties:
             trimming:
                 type: object
                 properties:
-                    adapter:
+                    adapters:
                         type: string
-                    additional:
+                    extra:
                         type: string
+
             salmon:
                 type: object
                 properties:
                     libtype:
                         type: string
+                    adapters:
+                        type: string
+                    extra:
+                        type: string
+
             salmon_index:
                 type: object
                 properties:
                     gencode:
                         type: boolean
+                        
             multiqc:
                 type: string
+
             htseq-count:
                 type: object
                 properties:
@@ -82,6 +97,15 @@ properties:
                         type: string
                     extra:
                         type: string
+            
+            featureCounts:
+                type: object
+                properties:
+                    extra:
+                        type: string
+                    strandedness:
+                        type: string
+
             deseq2:
                 type: object
                 properties:
@@ -205,6 +229,16 @@ properties:
                         type: integer
                     walltime:
                         type: integer
+
+            featureCounts:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
             
             salmon_matrix_from_quants:
                 type: object
@@ -265,7 +299,48 @@ properties:
                         type: integer
                     walltime:
                         type: integer
+
             deseq2_diffexp:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            pca:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            ma:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            distance:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            expression_heatmap:
                 type: object
                 properties:
                     threads:

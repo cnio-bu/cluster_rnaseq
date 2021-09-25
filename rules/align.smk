@@ -12,7 +12,7 @@ def get_hisat_reads(wildcards):
 ### SALMON ###
 rule salmon_quant_se:
     input:
-        salmon_index=rules.salmon_index.output,
+        salmon_index=config['ref']['salmon']['salmon_index'],
         se_reads=rules.trim_adapters_single_end.output.trimmed
     output:
         quant=f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf"
@@ -33,7 +33,7 @@ rule salmon_quant_se:
 
 rule salmon_quant_paired:
     input:
-        salmon_index=rules.salmon_index.output,
+        salmon_index=config['ref']['salmon']['salmon_index'],
         r1_reads=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         r2_reads=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz"
     output:
@@ -58,7 +58,7 @@ rule star_align_se:
     input:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         # path to STAR reference genome index
-        index=rules.star_index.output
+        index=config['ref']['star']['star_index']
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -82,7 +82,7 @@ rule star_align_paired:
         fq1=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R1.fastq.gz",
         fq2=f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R2.fastq.gz",
         # path to STAR reference genome index
-        index=rules.star_index.output
+        index=config['ref']['star']['star_index']
     output:
         aligned=OUTDIR + '/mapped/star/{sample}/Aligned.sortedByCoord.out.bam'
     threads:
@@ -105,9 +105,9 @@ rule star_align_paired:
 rule hisat2_align:
     input:
         reads=get_hisat_reads,
-        index_dir = rules.hisat2_index.output
+        index_dir = config['ref']['hisat2']['hisat2_index']
     output:
-        aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
+        aligned=OUTDIR + "/mapped/hisat2/{sample}/{sample}.bam"
     log:
         f"{LOGDIR}/hisat2_align/{{sample}}.log"
     params:
@@ -124,7 +124,7 @@ rule hisat2_align:
 
 rule hisat2_sort:
     input:
-        aligned=OUTDIR + "/mapped/hisat2/{sample}.bam"
+        aligned=OUTDIR + "/mapped/hisat2/{sample}/{sample}.bam"
     output:
         sortedCoord=OUTDIR + "/mapped/hisat2/{sample}/Aligned.sortedByCoord.out.bam"
     log:

@@ -1,25 +1,10 @@
-rule htseq_count_matrix:
-    input:
-        quant=expand(f"{OUTDIR}/quant/{chosen_aligner}/{{sample}}.tab", \
-                     sample=samples['sample'])
-    output:
-        counts=f"{OUTDIR}/deseq2/{chosen_aligner}/counts.tsv"
-    threads:
-        get_resource("htseq_count_matrix", "threads")
-    resources:
-        mem=get_resource("htseq_count_matrix", "mem"),
-        walltime=get_resource("htseq_count_matrix", "walltime")
-    log: f"{LOGDIR}/deseq2/{chosen_aligner}/htseq_count_matrix.log"
-    script:
-        "../scripts/htseq_count_matrix.R"
-
 rule deseq2_init:
     input:
-        counts=f"{OUTDIR}/deseq2/{chosen_aligner}/counts.tsv"
+        counts = f"{OUTDIR}/deseq2/{deseq_path}/counts.tsv"
     output:
-        dds=f"{OUTDIR}/deseq2/{chosen_aligner}/dds.rds",
-        normalized_counts=f"{OUTDIR}/deseq2/{chosen_aligner}/normalizedcounts.tsv",
-        vst=f"{OUTDIR}/deseq2/{chosen_aligner}/dds_vst.rds"
+        dds = f"{OUTDIR}/deseq2/{deseq_path}/dds.rds",
+        normalized_counts = f"{OUTDIR}/deseq2/{deseq_path}/normalizedcounts.tsv",
+        vst = expand(f"{OUTDIR}/deseq2/{deseq_path}/dds_vst{{fsuffix}}.rds", fsuffix = filesuffix)
     threads:
         get_resource("deseq2_init", "threads")
     resources:
@@ -28,20 +13,22 @@ rule deseq2_init:
     params:
         samples=config['samples'],
         designmatrix=config['parameters']['deseq2']['designmatrix'],
-        ref_levels=ref_levels,
-        design=config['parameters']['deseq2']['design']
-    log: f"{LOGDIR}/deseq2/{chosen_aligner}/deseq2_init.log"
+        ref_levels=ref_levels.to_list(),
+        design=config['parameters']['deseq2']['design'],
+        batch=batch
+    log: f"{LOGDIR}/deseq2/{deseq_path}/deseq2_init.log"
     conda:
         "../envs/deseq2.yaml"
     script:
         "../scripts/deseq2_init.R"
 
+
 rule deseq2_diffexp:
     input:
-        dds=f"{OUTDIR}/deseq2/{chosen_aligner}/dds.rds"
+        dds = rules.deseq2_init.output.dds
     output:
-        xlsx=f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.xlsx",
-        tsv=f"{OUTDIR}/deseq2/{chosen_aligner}/{{contrast}}/{{contrast}}_diffexp.tsv"
+        xlsx = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx",
+        tsv = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv"
     threads:
         get_resource("deseq2_diffexp", "threads")
     resources:
@@ -50,8 +37,8 @@ rule deseq2_diffexp:
     params:
         condition=var_interest,
         levels=lambda wildcards: contrasts[wildcards.contrast]
-    log: f"{LOGDIR}/deseq2/{chosen_aligner}/{{contrast}}/deseq2_diffexp.log"
+    log: f"{LOGDIR}/deseq2/{deseq_path}/{{contrast}}/deseq2_diffexp.log"
     conda:
         "../envs/deseq2.yaml"
-    script: 
+    script:
         "../scripts/deseq2_diffexp.R"

@@ -10,8 +10,14 @@ outdir: ''
 # path to the logs directory
 logdir: ''
 
+## ALIGNER ##
 # 0 = STAR, 1 = SALMON, 2 = HISAT2
 aligner: 0
+
+## QUANTIFIER ##
+# 0 = HTSEQ, 1 = FEATURECOUNTS
+quantifier: 1
+
 
 # genomic reference sequences and annotations for aligners and quantifiers
 ref:
@@ -21,8 +27,9 @@ ref:
         fasta: "/my/genome.fasta"
         # STAR aligner index path (auto generated if not already present)
         # Deafult: Cluster's shared index
-        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a/"
+        #star_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/star/2.7.9a"
         star_index: "/my/genome_idx"
+    
     salmon: 
        # salmon transcriptome: .fa.gz
         transcriptome: "/path/to/salmon/transcriptome"
@@ -30,13 +37,15 @@ ref:
         genome_assembly: "/path/to/salmon/genome_assembly"
         # Salmon aligner index path (auto generated if not already present)
         # Deafult: Cluster's shared index
-        salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.0/"
+        #salmon_index: "/storage/scratch01/shared/indexes/h_sapiens/gencode/v38/salmon/1.5.2"
+        salmon_index: "/my/genome_idx"
+    
     hisat2:
+        annotation: "/my/annotation.gtf"
         # fasta file with transcripts
         fasta: "/my/genome.fasta"
         # HISAT2 aligner index path (auto generated if not already present)
         hisat2_index: "/my/genome_idx"
-        annotation: "/my/annotation.gtf"
 
 
 parameters:
@@ -45,7 +54,7 @@ parameters:
         seed: 12345
     trimming:
             adapters: "resources/trimming/adapters.fa"
-            extra: "-Xmx2g ktrim=r k=23 mink=11 hdist=1"
+            extra: " ktrim=r k=23 mink=11 hdist=1"
 
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html
@@ -66,10 +75,15 @@ parameters:
         strandedness: "-s yes"
         extra: "-i gene_name"
 
+    featureCounts:
+        extra: ""
+        # Strandness: 0 = "unstranded", 1 = "stranded", 2 = "reversely stranded" (default: 0)
+        strandedness: "-s 1"
+
     deseq2:
         # path or URL to design matrix
         designmatrix: "designmatrix.tsv"
-        design: "~condition"
+        design: "~date + condition"
 
 
 
@@ -90,14 +104,14 @@ resources:
         walltime: 10
 
     trim_adapters_single_end:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  8192
+        walltime: 60
         
     trim_adapters_paired_end:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  8192
+        walltime: 60
  
     salmon_quant:
         threads: 20
@@ -125,10 +139,20 @@ resources:
         walltime: 10
         
     htseq_count:
-        threads: 1
-        mem:  4096
-        walltime: 10
+        threads: 8
+        mem:  64000
+        walltime: 120
 
+    featureCounts:
+        threads: 8
+        mem:  64000
+        walltime: 120
+    
+    fcounts_count_matrix:
+        threads: 8
+        mem:  64000
+        walltime: 120
+    
     salmon_matrix_from_quants:
         threads: 1
         mem: 4096
@@ -137,7 +161,7 @@ resources:
     salmon_index:
         threads: 32
         mem: 64000
-        walltime: 60
+        walltime: 180
 
     star_index:
         threads: 8
@@ -170,6 +194,26 @@ resources:
         walltime: 10
     
     downsample_paired_end:
+        threads: 1
+        mem:  4096
+        walltime: 10
+
+    pca:
+        threads: 1
+        mem:  4096
+        walltime: 10
+    
+    ma:
+        threads: 1
+        mem:  4096
+        walltime: 10
+
+    distance:
+        threads: 1
+        mem:  4096
+        walltime: 10
+
+    expression_heatmap:
         threads: 1
         mem:  4096
         walltime: 10
