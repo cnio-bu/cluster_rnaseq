@@ -5,10 +5,10 @@ samples: samples.tsv
 units: units.tsv
 
 # path to the results directory
-outdir: ''
+outdir: 'results'
 
 # path to the logs directory
-logdir: ''
+logdir: 'logs'
 
 ## ALIGNER ##
 # 0 = STAR, 1 = SALMON, 2 = HISAT2
@@ -72,7 +72,8 @@ parameters:
         strandedness: "-s yes"
 
     featureCounts:
-        extra: ""
+        # Feature type sets to gene by default because it seems that improve the results
+        extra: "-t 'gene'"
         # Strandness: 0 = "unstranded", 1 = "stranded", 2 = "reversely stranded" (default: 0)
         strandedness: "-s 1"
 

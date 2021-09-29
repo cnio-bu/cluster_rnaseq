@@ -72,7 +72,8 @@ rule featurecounts:
     input:
         bam_file= f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam"
     output:
-        quant=f"{OUTDIR}/quant/{chosen_aligner}/featureCounts/{{sample}}.tab"
+        quant=f"{OUTDIR}/quant/{chosen_aligner}/featureCounts/{{sample}}.tab",
+        quant_summary=f"{OUTDIR}/quant/{chosen_aligner}/featureCounts/{{sample}}.tab.summary"
     threads:
         get_resource('featureCounts', 'threads')
     resources:

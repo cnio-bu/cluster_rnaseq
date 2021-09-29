@@ -3,6 +3,7 @@ import os
 import re
 import pandas as pd
 import numpy as np
+import sys
 from snakemake.utils import validate, min_version
 
 #### GLOBAL PARAMETERS ####
@@ -88,6 +89,28 @@ def get_covariates(design):
 	covariates = list(set(covariates))
 	return {"covariates": covariates, "variable_interest": variable_interest}
 
+
+def get_final_step():
+	arg_list = sys.argv
+	possible_steps = ["all", "index", "files_qc", "trimming", "alignment", "quantification", \
+					"diffexp", "plots", "multiqc_all"]
+
+	step = [i for i in arg_list if i in possible_steps]
+
+	if len(step) > 1:
+		print(f'Failed to resolve target rule for {step}. Only one can be specified. Exiting...')
+		sys.exit(1)
+
+	elif len(step) == 0:
+		step = ["plots"]
+		
+	elif step[0] == "all":
+		step[0] = "plots"
+
+	return step[0]
+
+
+
 #### LOAD SAMPLES TABLES ###
 
 samples = pd.read_table(config["samples"]).set_index("sample", drop=False)
@@ -150,6 +173,11 @@ if len(covariates) > 1:
 else:
 	batch = None
 
+
+#### Final Step #### Global variable for the last step in the run
+final_step = get_final_step()
+
+
 #### Load rules ####
 include: 'rules/common.smk'
 include: 'rules/qc.smk'
@@ -168,9 +196,8 @@ def get_index_input():
 
 
 def get_trimming_input():
-	
-	#trimming_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
-	trimming_input = []
+
+	trimming_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 
 	for sample in samples['sample']:
 		if is_single_end(sample):
@@ -178,47 +205,47 @@ def get_trimming_input():
 		else:
 			trimming_input += expand(f"{OUTDIR}/trimmed/{sample}/{sample}_R{{strand}}.fastq.gz", strand=[1,2])
 	
+	trimming_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return trimming_input
 
 
 def get_alignment_input():
 
-	#alignment_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
-	alignment_input = []
+	alignment_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 
 	if chosen_aligner == "salmon":
 		alignment_input += expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf", sample=samples['sample'])
 	else:
 		alignment_input += expand(f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam", sample=samples['sample'])
 	
+	alignment_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return alignment_input
 
 
 def get_quantification_input():
 
-	#quantification_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
-	quantification_input = []
+	quantification_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 	
 	quantification_input += [f"{OUTDIR}/deseq2/{deseq_path}/counts.tsv"]
 	
+	quantification_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return quantification_input
 
 
 def get_diffexp_input():
 
-	#diffexp_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
-	diffexp_input = []
+	diffexp_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 
 	diffexp_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
 	diffexp_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
 	
+	diffexp_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return diffexp_input
 
 
 def get_plots_input():
 
-	#plots_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html",	f"{OUTDIR}/multiqc/multiqc_run_report.html"]
-	plots_input = []
+	plots_input= [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 	
 	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx", contrast=contrasts.keys())
 	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv", contrast=contrasts.keys())
@@ -228,12 +255,13 @@ def get_plots_input():
 						ALLcontrast=allSamples.keys(), fsuffix=filesuffix, plot = ["pca", "dist"], pext = ["pdf", "png"])
 	plots_input += expand(f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/plots/{{contrast}}_MAplot.{{pext}}", \
 						contrast=contrasts.keys(), pext = ["pdf", "png"])
+
+	plots_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return plots_input
 
 
 
 # TARGET RULES
-
 rule all:
 	input:
 		get_plots_input()
@@ -248,6 +276,7 @@ rule index:
 rule files_qc:
 	input:
 		f"{OUTDIR}/multiqc/multiqc_files_report.html"
+
 
 rule trimming:
 	input:
