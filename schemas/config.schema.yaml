@@ -54,6 +54,15 @@ properties:
 
     parameters:
         properties:
+            downsampling:
+                type: object
+                properties:
+                    enabled:
+                        type: boolean
+                    n:
+                        type: integer
+                    seed:
+                        type: integer
             trimming:
                 type: object
                 properties:
@@ -140,7 +149,27 @@ properties:
                         type: integer
                     walltime:
                         type: integer
-
+            
+            downsample_single_end:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+    
+            downsample_paired_end:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+                        
             trim_adapters_single_end:
                 type: object
                 properties:

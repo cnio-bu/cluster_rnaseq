@@ -49,9 +49,14 @@ ref:
 
 
 parameters:
+    downsampling:
+        enabled: True
+        n: 10000000 # Downsample to 10 million reads
+        seed: 12345
+
     trimming:
-            adapters: "resources/trimming/adapters.fa"
-            extra: " ktrim=r k=23 mink=11 hdist=1"
+        adapters: "resources/trimming/adapters.fa"
+        extra: " ktrim=r k=23 mink=11 hdist=1"
 
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html
@@ -99,6 +104,16 @@ resources:
         threads: 8
         mem:  4096
         walltime: 10
+
+    downsample_single_end:
+        threads: 1
+        mem:  8192
+        walltime: 60
+    
+    downsample_paired_end:
+        threads: 1
+        mem:  8192
+        walltime: 60
 
     trim_adapters_single_end:
         threads: 8
