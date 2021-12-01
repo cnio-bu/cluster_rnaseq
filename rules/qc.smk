@@ -110,8 +110,10 @@ rule multiqc_files:
     resources:
         mem=get_resource("multiqc","mem"),
         walltime=get_resource("multiqc","walltime")
-    wrapper:
-        "0.74.0/bio/multiqc"
+    conda:
+        '../envs/multiqc.yaml'
+    script:
+        "../scripts/multiqc.py"
 
 
 # QC for concat files
@@ -152,8 +154,10 @@ rule multiqc_concat:
     resources:
         mem=get_resource("multiqc","mem"),
         walltime=get_resource("multiqc","walltime")
-    wrapper:
-        "0.74.0/bio/multiqc"
+    conda:
+        '../envs/multiqc.yaml'
+    script:
+        "../scripts/multiqc.py"
 
 
 # MultiQC for all executions
@@ -173,5 +177,7 @@ rule multiqc_join:
     resources:
         mem=get_resource("multiqc","mem"),
         walltime=get_resource("multiqc","walltime")
-    wrapper:
-        "0.74.0/bio/multiqc"
+    conda:
+        '../envs/multiqc.yaml'
+    script:
+        "../scripts/multiqc.py"
