@@ -10,6 +10,7 @@ rule pca:
         mem=get_resource("pca", "mem"),
         walltime=get_resource("pca", "walltime")
     params:
+        designmatrix=config['parameters']['deseq2']['designmatrix'],
         levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
         design=config['parameters']['deseq2']['design'],
         ref_levels=ref_levels.to_list()
@@ -51,6 +52,7 @@ rule distance:
         mem=get_resource("distance", "mem"),
         walltime=get_resource("distance", "walltime")
     params:
+        designmatrix=config['parameters']['deseq2']['designmatrix'],
         levels=lambda wildcards: allSamples[wildcards.ALLcontrast],
         ref_levels=ref_levels.to_list()
     log: f"{LOGDIR}/deseq2/{deseq_path}/{{ALLcontrast}}/plots/dist{{fsuffix}}.log"

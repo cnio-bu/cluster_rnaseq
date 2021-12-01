@@ -17,6 +17,7 @@ source("scripts/levelFunctions.R")
 vsd <- snakemake@input[["vst"]]
 
 ## SNAKEMAKE PARAMS ##
+designmatrix <- snakemake@params[["designmatrix"]]
 levels <- snakemake@params[["levels"]]
 design <- snakemake@params[["design"]]
 ref <- snakemake@params[["ref_levels"]]
@@ -25,12 +26,15 @@ ref <- snakemake@params[["ref_levels"]]
 # Get vst
 vsd <- readRDS(vsd)
 
+# Get design matrix
+designmatrix <- read.table(designmatrix, header = TRUE, row.names = 1)
+
 # Get variables to plot by from design
 variables <- unlist(str_split(design, pattern = "\\*|:|\\+"))
 variables <- rev(str_trim(str_remove(variables, "~")))
 
 # colData
-coldata <- as.data.frame(colData(vsd)) %>% select(-sizeFactor)
+coldata <- as.data.frame(colData(vsd)) %>% select(colnames(designmatrix))
 
 # Set names to reference levels for each column in coldata
 ref <- setNames(ref, colnames(coldata))
