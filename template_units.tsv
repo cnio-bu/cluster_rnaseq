@@ -4,6 +4,6 @@ A	2	A2.1.fq.gz	A2.2.fq.gz
 B	1	B1.1.fq.gz	B1.2.fq.gz
 B	2	B2.1.fq.gz	B2.2.fq.gz
 C	1	C1.1.fq.gz	C1.2.fq.gz
-C	1	C2.1.fq.gz	C2.2.fq.gz
+C	2	C2.1.fq.gz	C2.2.fq.gz
 D	1	D1.1.fq.gz	D1.2.fq.gz
-D	1	D2.1.fq.gz	D2.2.fq.gz
+D	2	D2.1.fq.gz	D2.2.fq.gz
