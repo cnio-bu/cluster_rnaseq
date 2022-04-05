@@ -41,7 +41,7 @@ rule concat_R2_reads:
 
 rule trim_adapters_single_end:
     input:
-        sample=OUTDIR + '/' + dir + '/{sample}_R1.fastq.gz'
+        sample=[OUTDIR + '/' + dir + '/{sample}_R1.fastq.gz']
     output:
         trimmed=OUTDIR + '/trimmed/{sample}/{sample}_R1.fastq.gz',
         singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',

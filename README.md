@@ -255,8 +255,6 @@ The available targets are:
 
 * **plots**: run cluster_rnaseq until get the final plots.
 
-    > At present this target is equivalent to target **all**. 
-
 * **index**: create an index for the aligner chosen in `config.yaml`.
 
 * **multiqc_all**: search for any file in the *results* folder that can be added to a MultiQC report and create the report. 
