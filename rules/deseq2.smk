@@ -8,7 +8,7 @@ rule deseq2_init:
     threads:
         get_resource("deseq2_init", "threads")
     resources:
-        mem=get_resource("deseq2_init", "mem"),
+        mem_mb=get_resource("deseq2_init", "mem_mb"),
         walltime=get_resource("deseq2_init", "walltime")
     params:
         samples=config['samples'],
@@ -32,7 +32,7 @@ rule deseq2_diffexp:
     threads:
         get_resource("deseq2_diffexp", "threads")
     resources:
-        mem=get_resource("deseq2_diffexp", "mem"),
+        mem_mb=get_resource("deseq2_diffexp", "mem_mb"),
         walltime=get_resource("deseq2_diffexp", "walltime")
     params:
         condition=var_interest,

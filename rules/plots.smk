@@ -7,7 +7,7 @@ rule pca:
     threads:
         get_resource("pca", "threads")
     resources:
-        mem=get_resource("pca", "mem"),
+        mem_mb=get_resource("pca", "mem_mb"),
         walltime=get_resource("pca", "walltime")
     params:
         designmatrix=config['parameters']['deseq2']['designmatrix'],
@@ -29,7 +29,7 @@ rule ma:
     threads:
         get_resource("ma", "threads")
     resources:
-        mem=get_resource("ma", "mem"),
+        mem_mb=get_resource("ma", "mem_mb"),
         walltime=get_resource("ma", "walltime")
     params:
         condition=var_interest,
@@ -49,7 +49,7 @@ rule distance:
     threads:
         get_resource("distance", "threads")
     resources:
-        mem=get_resource("distance", "mem"),
+        mem_mb=get_resource("distance", "mem_mb"),
         walltime=get_resource("distance", "walltime")
     params:
         designmatrix=config['parameters']['deseq2']['designmatrix'],
@@ -71,7 +71,7 @@ rule expression_heatmap:
     threads:
         get_resource("expression_heatmap", "threads")
     resources:
-        mem=get_resource("expression_heatmap", "mem"),
+        mem_mb=get_resource("expression_heatmap", "mem_mb"),
         walltime=get_resource("expression_heatmap", "walltime")
     params:
         levels=lambda wildcards: contrasts[wildcards.contrast],

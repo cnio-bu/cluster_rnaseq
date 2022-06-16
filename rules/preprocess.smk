@@ -50,7 +50,7 @@ rule trim_adapters_single_end:
     threads:
         get_resource('trim_adapters_single_end', 'threads')
     resources:
-        mem=get_resource('trim_adapters_single_end', 'mem'),
+        mem_mb=get_resource('trim_adapters_single_end', 'mem_mb'),
         walltime=get_resource('trim_adapters_single_end', 'walltime')
     params:
         adapters='ref=' + get_params('trimming','adapters'),
@@ -72,7 +72,7 @@ rule trim_adapters_paired_end:
     threads:
         get_resource('trim_adapters_paired_end', 'threads')
     resources:
-        mem=get_resource('trim_adapters_paired_end', 'mem'),
+        mem_mb=get_resource('trim_adapters_paired_end', 'mem_mb'),
         walltime=get_resource('trim_adapters_paired_end', 'walltime')
     params:
         adapters='ref=' + get_params('trimming','adapters'),
@@ -92,7 +92,7 @@ if downsampling:
         threads:
             get_resource('downsample_single_end', 'threads')
         resources:
-            mem=get_resource('downsample_single_end', 'mem'),
+            mem_mb=get_resource('downsample_single_end', 'mem_mb'),
             walltime=get_resource('downsample_single_end', 'walltime')
         params:
             n=get_params('downsampling', 'n'),
@@ -114,7 +114,7 @@ if downsampling:
         threads:
             get_resource('downsample_paired_end', 'threads')
         resources:
-            mem=get_resource('downsample_paired_end', 'mem'),
+            mem_mb=get_resource('downsample_paired_end', 'mem_mb'),
             walltime=get_resource('downsample_paired_end', 'walltime')
         params:
             n=get_params('downsampling', 'n'),

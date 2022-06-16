@@ -35,7 +35,7 @@ rule salmon_index:
     threads:
         get_resource('salmon_index', 'threads')
     resources:
-        mem=get_resource('salmon_index', 'mem'),
+        mem_mb=get_resource('salmon_index', 'mem_mb'),
         walltime=get_resource('salmon_index', 'walltime')
     params:
         gencode = IS_GENCODE # Dirty, but necessary. See Snakefile.
@@ -57,7 +57,7 @@ rule star_index:
     threads: 
         get_resource("star_index", "threads")
     resources:
-        mem=get_resource("star_index", "mem"),
+        mem_mb=get_resource("star_index", "mem_mb"),
         walltime=get_resource("star_index", "walltime")
     params:
         extra = ""
@@ -76,7 +76,7 @@ rule hisat2_index:
     threads:
         get_resource("hisat2_index", "threads")
     resources:
-        mem=get_resource("hisat2_index", "mem"),
+        mem_mb=get_resource("hisat2_index", "mem_mb"),
         walltime=get_resource("hisat2_index", "walltime")
     params:
         prefix=config["ref"]["hisat2"]["hisat2_index"] + "/hisat2_index"
