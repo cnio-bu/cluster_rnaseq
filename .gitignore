@@ -11,3 +11,4 @@ resources/align
 test
 designmatrix.tsv
 Log.out
+logs_slurm

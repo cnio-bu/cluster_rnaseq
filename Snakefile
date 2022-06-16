@@ -201,7 +201,7 @@ def get_trimming_input():
 
 	for sample in samples['sample']:
 		if is_single_end(sample):
-			trimming_input += f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"
+			trimming_input += [f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"]
 		else:
 			trimming_input += expand(f"{OUTDIR}/trimmed/{sample}/{sample}_R{{strand}}.fastq.gz", strand=[1,2])
 	

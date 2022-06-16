@@ -19,7 +19,7 @@ rule salmon_quant_se:
     threads:
         get_resource('salmon_quant', 'threads')
     resources:
-        mem=get_resource('salmon_quant', 'mem'),
+        mem_mb=get_resource('salmon_quant', 'mem_mb'),
         walltime=get_resource('salmon_quant', 'walltime')
     params:
         libtype=get_params('salmon', 'libtype'),
@@ -41,7 +41,7 @@ rule salmon_quant_paired:
     threads:
         get_resource('salmon_quant', 'threads')
     resources:
-        mem=get_resource('salmon_quant', 'mem'),
+        mem_mb=get_resource('salmon_quant', 'mem_mb'),
         walltime=get_resource('salmon_quant', 'walltime')
     params:
         libtype=get_params('salmon', 'libtype'),
@@ -64,7 +64,7 @@ rule star_align_se:
     threads:
         get_resource('star_align', 'threads')
     resources:
-        mem=get_resource('star_align', 'mem'),
+        mem_mb=get_resource('star_align', 'mem_mb'),
         walltime=get_resource('star_align', 'walltime')
     params:
         # optional parameters
@@ -88,7 +88,7 @@ rule star_align_paired:
     threads:
         get_resource("star_align", "threads")
     resources:
-        mem=get_resource('star_align', 'mem'),
+        mem_mb=get_resource('star_align', 'mem_mb'),
         walltime=get_resource('star_align', 'walltime')
     params:
         # optional parameters
@@ -116,7 +116,7 @@ rule hisat2_align:
     threads:
         get_resource("hisat2_align", "threads")
     resources:
-        mem=get_resource('hisat2_align', 'mem'),
+        mem_mb=get_resource('hisat2_align', 'mem_mb'),
         walltime=get_resource('hisat2_align', 'walltime')
     wrapper:
         "0.74.0/bio/hisat2/align"
@@ -132,7 +132,7 @@ rule hisat2_sort:
     threads:
         get_resource("hisat2_sort", "threads")
     resources:
-        mem=get_resource('hisat2_sort', 'mem'),
+        mem_mb=get_resource('hisat2_sort', 'mem_mb'),
         walltime=get_resource('hisat2_sort', 'walltime')
     conda:
         '../envs/aligners.yaml'

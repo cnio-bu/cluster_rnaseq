@@ -83,7 +83,7 @@ rule fastqc_files:
     threads: 
         get_resource("fastqc","threads")
     resources:
-        mem=get_resource("fastqc","mem"),
+        mem_mb=get_resource("fastqc","mem_mb"),
         walltime=get_resource("fastqc","walltime")
     params: 
         lambda wc: "-t {}".format(get_resource("fastqc","threads"))
@@ -108,7 +108,7 @@ rule multiqc_files:
         f"{LOGDIR}/multiqc_files.log"
     threads: get_resource("multiqc","threads")
     resources:
-        mem=get_resource("multiqc","mem"),
+        mem_mb=get_resource("multiqc","mem_mb"),
         walltime=get_resource("multiqc","walltime")
     conda:
         '../envs/multiqc.yaml'
@@ -127,7 +127,7 @@ rule fastqc_concat:
     threads: 
         get_resource("fastqc","threads")
     resources:
-        mem=get_resource("fastqc","mem"),
+        mem_mb=get_resource("fastqc","mem_mb"),
         walltime=get_resource("fastqc","walltime")
     params: 
         lambda wc: "-t {}".format(get_resource("fastqc","threads"))
@@ -152,7 +152,7 @@ rule multiqc_concat:
         f"{LOGDIR}/multiqc.log"
     threads: get_resource("multiqc","threads")
     resources:
-        mem=get_resource("multiqc","mem"),
+        mem_mb=get_resource("multiqc","mem_mb"),
         walltime=get_resource("multiqc","walltime")
     conda:
         '../envs/multiqc.yaml'
@@ -175,7 +175,7 @@ rule multiqc_join:
         f"{LOGDIR}/multiqc_all.log"
     threads: get_resource("multiqc","threads")
     resources:
-        mem=get_resource("multiqc","mem"),
+        mem_mb=get_resource("multiqc","mem_mb"),
         walltime=get_resource("multiqc","walltime")
     conda:
         '../envs/multiqc.yaml'

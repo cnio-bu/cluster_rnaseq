@@ -92,130 +92,130 @@ parameters:
 resources:
     default:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
         
     fastqc:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
         
     multiqc:
         threads: 8
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
 
     downsample_single_end:
         threads: 1
-        mem:  8192
+        mem_mb:  8192
         walltime: 60
     
     downsample_paired_end:
         threads: 1
-        mem:  8192
+        mem_mb:  8192
         walltime: 60
 
     trim_adapters_single_end:
         threads: 8
-        mem:  8192
+        mem_mb:  8192
         walltime: 60
         
     trim_adapters_paired_end:
         threads: 8
-        mem:  8192
+        mem_mb:  8192
         walltime: 60
  
     salmon_quant:
         threads: 20
-        mem: 32000
+        mem_mb: 32000
         walltime: 10
 
     star_align:
         threads: 8
-        mem: 64000
+        mem_mb: 64000
         walltime: 60
 
     hisat2_align:
         threads: 8
-        mem: 64000
+        mem_mb: 64000
         walltime: 60
     
     hisat2_sort:
         threads: 8
-        mem:  64000
+        mem_mb:  64000
         walltime: 60
 
     bam_indexing:
         threads: 8
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
         
     htseq_count:
         threads: 8
-        mem:  64000
+        mem_mb:  64000
         walltime: 120
 
     featureCounts:
         threads: 8
-        mem:  64000
+        mem_mb:  64000
         walltime: 120
     
     fcounts_count_matrix:
         threads: 8
-        mem:  64000
+        mem_mb:  64000
         walltime: 120
     
     salmon_matrix_from_quants:
         threads: 1
-        mem: 4096
+        mem_mb: 4096
         walltime: 10
         
     salmon_index:
         threads: 32
-        mem: 64000
+        mem_mb: 64000
         walltime: 180
 
     star_index:
         threads: 8
-        mem: 64000
+        mem_mb: 64000
         walltime: 720
 
     hisat2_index:
         threads: 32
-        mem: 64000
+        mem_mb: 64000
         walltime: 180
     
     htseq_count_matrix:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
     
     deseq2_init:
         threads: 4
-        mem:  8192
+        mem_mb:  8192
         walltime: 10
     
     deseq2_diffexp:
         threads: 2
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
     
     pca:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
     
     ma:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
 
     distance:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
 
     expression_heatmap:
         threads: 1
-        mem:  4096
+        mem_mb:  4096
         walltime: 10
