@@ -105,6 +105,11 @@ resources:
         mem_mb:  4096
         walltime: 10
 
+    concat:
+        threads: 1
+        mem_mb:  4096
+        walltime: 10
+
     downsample_single_end:
         threads: 1
         mem_mb:  8192

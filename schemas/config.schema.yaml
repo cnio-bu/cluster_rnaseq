@@ -150,6 +150,16 @@ properties:
                     walltime:
                         type: integer
             
+            concat:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
             downsample_single_end:
                 type: object
                 properties:
