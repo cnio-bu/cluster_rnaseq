@@ -26,17 +26,27 @@ def get_R2_fragments(wildcards):
 
 
 rule concat_R1_reads:
-	input:get_R1_fragments
-	output:
-		concat_read = OUTDIR + f'/reads/{{sample}}_R1.fastq.gz'
-	shell: 'cat {input} > {output}'
+    input:get_R1_fragments
+    output:
+        concat_read = OUTDIR + f'/reads/{{sample}}_R1.fastq.gz'
+    threads:
+        get_resource('concat', 'threads')
+    resources:
+        mem_mb=get_resource('concat', 'mem_mb'),
+        walltime=get_resource('concat', 'walltime')
+    shell: 'cat {input} > {output}'
 
 
 rule concat_R2_reads:
-	input: get_R2_fragments
-	output:
-		concat_read = OUTDIR + f'/reads/{{sample}}_R2.fastq.gz'
-	shell: 'cat {input} > {output}'
+    input: get_R2_fragments
+    output:
+        concat_read = OUTDIR + f'/reads/{{sample}}_R2.fastq.gz'
+    threads:
+        get_resource('concat', 'threads')
+    resources:
+        mem_mb=get_resource('concat', 'mem_mb'),
+        walltime=get_resource('concat', 'walltime')
+    shell: 'cat {input} > {output}'
 
 
 rule trim_adapters_single_end:
