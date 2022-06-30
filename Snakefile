@@ -198,27 +198,39 @@ def get_index_input():
 def get_trimming_input():
 
 	trimming_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
-
+	'''
+	for sample in samples['sample']:
+		if is_single_end(sample):
+			trimming_input += [f"{OUTDIR}/qc/fastqc_concat/{sample}_R1_fastqc.html"]
+		else:
+			trimming_input += expand(f"{OUTDIR}/qc/fastqc_concat/{sample}_R{{strand}}_fastqc.html", strand=[1,2])
+	'''
 	for sample in samples['sample']:
 		if is_single_end(sample):
 			trimming_input += [f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"]
 		else:
 			trimming_input += expand(f"{OUTDIR}/trimmed/{sample}/{sample}_R{{strand}}.fastq.gz", strand=[1,2])
 	
-	trimming_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	#trimming_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return trimming_input
 
 
 def get_alignment_input():
 
 	alignment_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
-
+	'''
+	for sample in samples['sample']:
+		if is_single_end(sample):
+			alignment_input += [f"{OUTDIR}/qc/fastqc_concat/{sample}_R1_fastqc.html"]
+		else:
+			alignment_input += expand(f"{OUTDIR}/qc/fastqc_concat/{sample}_R{{strand}}_fastqc.html", strand=[1,2])
+	'''
 	if chosen_aligner == "salmon":
 		alignment_input += expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf", sample=samples['sample'])
 	else:
 		alignment_input += expand(f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam", sample=samples['sample'])
 	
-	alignment_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
+	#alignment_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return alignment_input
 
 
