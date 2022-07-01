@@ -5,10 +5,17 @@ if downsampling:
 else:
     dir = "reads"
 
-## Let snakemake use paired reads whenever possible
+## Let stablish rule order wheter data is single end or paired end
 if downsampling:
-    ruleorder: downsample_paired_end > downsample_single_end
-ruleorder: trim_adapters_paired_end > trim_adapters_single_end
+    if single_end:
+        ruleorder: downsample_single_end > downsample_paired_end
+    else:
+        ruleorder: downsample_paired_end > downsample_single_end
+
+if single_end:
+    ruleorder: trim_adapters_single_end > trim_adapters_paired_end
+else:
+    ruleorder: trim_adapters_paired_end > trim_adapters_single_end
 
 def get_raw_fastq(wildcards,strand=1):
     if is_multi_lane(wildcards.sample):
