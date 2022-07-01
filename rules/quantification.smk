@@ -1,6 +1,5 @@
 def featurecounts_args(sample):
     pars = ""
-    single_end = is_single_end(sample)
     if single_end == False:
         pars = "-p"
     return pars

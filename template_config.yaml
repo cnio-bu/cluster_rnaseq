@@ -50,7 +50,7 @@ ref:
 
 parameters:
     downsampling:
-        enabled: True
+        enabled: False
         n: 10000000 # Downsample to 10 million reads
         seed: 12345
 

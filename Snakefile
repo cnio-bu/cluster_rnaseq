@@ -200,13 +200,13 @@ def get_trimming_input():
 	trimming_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 	
 	for sample in samples['sample']:
-		if is_single_end(sample):
+		if single_end:
 			trimming_input += [f"{OUTDIR}/qc/fastqc_concat/{sample}_R1_fastqc.html"]
 		else:
 			trimming_input += expand(f"{OUTDIR}/qc/fastqc_concat/{sample}_R{{strand}}_fastqc.html", strand=[1,2])
 	
 	for sample in samples['sample']:
-		if is_single_end(sample):
+		if single_end:
 			trimming_input += [f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"]
 		else:
 			trimming_input += expand(f"{OUTDIR}/trimmed/{sample}/{sample}_R{{strand}}.fastq.gz", strand=[1,2])
@@ -220,7 +220,7 @@ def get_alignment_input():
 	alignment_input = [f"{OUTDIR}/multiqc/multiqc_files_report.html"]
 	
 	for sample in samples['sample']:
-		if is_single_end(sample):
+		if single_end:
 			alignment_input += [f"{OUTDIR}/qc/fastqc_concat/{sample}_R1_fastqc.html"]
 		else:
 			alignment_input += expand(f"{OUTDIR}/qc/fastqc_concat/{sample}_R{{strand}}_fastqc.html", strand=[1,2])
