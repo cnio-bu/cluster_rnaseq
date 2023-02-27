@@ -1,3 +1,6 @@
+## Deal with optional rules (fastq_screen)
+fastq_screen = config["parameters"]["fastq_screen"]["enabled"]
+
 def create_list_files(df_row, read):
     return f"{OUTDIR}/qc/fastqc_files/{df_row.loc['sample']}_{df_row.loc['lane']}_fq{read}_fastqc.zip"
    
@@ -96,20 +99,21 @@ rule fastqc_files:
 
 # Fastq_screen for single files:
 
-rule fastq_screen_files:
-    input: 
-        fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
-    output:
-        txt=f"{OUTDIR}/fastq_screen/fastqc_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.txt"
-        png=f"{OUTDIR}/fastq_screen/fastqc_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.png"
-    threads: 
-        get_resource("fastq_screen","threads")
-    params:
-        fastq_screen_config=config["parameters"]["fastq_screen"]["fastq_screen_config"] ## Dict with the configuration.
-        subset=config["parameters"]["subset"]
-        aligner=config["parameters"]["aligner"]
-    wrapper:
-        "v1.23.4/bio/fastq_screen"
+if fastq_screen: 
+    rule fastq_screen_files:
+        input: 
+            fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
+        output:
+            txt=f"{OUTDIR}/fastq_screen/fastqc_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.txt"
+            png=f"{OUTDIR}/fastq_screen/fastqc_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.png"
+        threads: 
+            get_resource("fastq_screen","threads")
+        params:
+            fastq_screen_config=config["parameters"]["fastq_screen"]["fastq_screen_config"] ## Dict with the configuration.
+            subset=config["parameters"]["subset"]
+            aligner=config["parameters"]["aligner"]
+        wrapper:
+            "v1.23.4/bio/fastq_screen"
 
 
 rule multiqc_files:
