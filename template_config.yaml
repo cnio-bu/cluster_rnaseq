@@ -58,6 +58,64 @@ parameters:
         adapters: "resources/trimming/adapters.fa"
         extra: " ktrim=r k=23 mink=11 hdist=1"
 
+    fastq_screen: # "--conf res/config/fastq_screen.config"
+        enabled: False
+        subset: 100000
+        aligner: "bowtie2"
+        # This section allows you to configure multiple databases to search against 
+        # in your screen.  For each database you need to provide a database name 
+        # (which can't contain spaces) and the location of the bowtie indices which 
+        # you created for that database.  The path to the index files SHOULD INCLUDE 
+        # THE BASENAME of the index. You can you can comment out or remove as many of 
+        # the existing entries as you like.
+        fastq_screen_config: 
+            database: 
+                Human:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Human/Homo_sapiens.GRCh38"
+                    browtie: ""
+                Mouse: 
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Mouse/Mus_musculus.GRCm38"
+                    browtie: ""
+                Rat:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Rat/Rnor_6.0"
+                    browtie: ""
+                Drosophila:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Drosophila/BDGP6"
+                    browtie: ""
+                Worm:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Worm/Caenorhabditis_elegans.WBcel235"
+                    browtie: ""
+                Yeast:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Yeast/Saccharomyces_cerevisiae.R64-1-1"
+                    browtie2: ""  
+                Arabidopsis:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Arabidopsis/Arabidopsis_thaliana.TAIR10"
+                    browtie: ""
+                Ecoli: 
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/E_coli/Ecoli"
+                    browtie: ""
+                rRNA: # In house custom database.
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/rRNA/GRCm38_rRNA"
+                    browtie: ""
+                MT:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Mitochondria/mitochondria"
+                    browtie: ""
+                PhiX:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/PhiX/phi_plus_SNPs"
+                    browtie: ""
+                Lambda:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Lambda/Lambda"
+                    browtie: ""
+                Vectors: 
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Vectors/Vectors"
+                    browtie: ""
+                Adapters:
+                    browtie2: "/storage/scratch01/shared/databases/fastq_screen/20211109/Adapters/Contaminants"
+                    browtie: ""
+            aligner_paths: 
+                browtie: "browtie"
+                browtie2: "browtie2"
+                   
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html
     salmon:
@@ -98,6 +156,11 @@ resources:
     fastqc:
         threads: 1
         mem_mb:  4096
+        walltime: 10
+    
+    fastq_screen:
+        threads: 8
+        mem_mb: 4096
         walltime: 10
         
     multiqc:

@@ -319,5 +319,3 @@ rule plots:
 rule multiqc_all:
 	input:
 		f"{OUTDIR}/multiqc/multiqc_all_report.html"
-
-
