@@ -61,7 +61,7 @@ parameters:
     # By default fastq_screen is not performed. In case the user want to run
     # fastq_screen the enabled value must be set to True.
     fastq_screen:
-        enabled: True
+        enabled: False
 
     # Pre-built Bowtie2 indices of commonly used genomes may be downloaded 
     # directly from the Babraham Bioinformatics website. These genome indices 
