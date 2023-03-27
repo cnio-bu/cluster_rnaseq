@@ -204,7 +204,16 @@ def get_trimming_input():
 			trimming_input += [f"{OUTDIR}/qc/fastqc_concat/{sample}_R1_fastqc.html"]
 		else:
 			trimming_input += expand(f"{OUTDIR}/qc/fastqc_concat/{sample}_R{{strand}}_fastqc.html", strand=[1,2])
-	
+
+	## Deal with optional rules (fastq_screen). If fastq_screen is enabled, this tool will also be performed over 
+	# concatenated files.
+	if config["parameters"]["fastq_screen"]["enabled"]:
+		for sample in samples['sample']:
+			if single_end:
+				trimming_input += [f"{OUTDIR}/fastq_screen/fastq_screen_concat/{sample}_R1_fastq_screen.txt"]
+			else:
+				trimming_input += expand(f"{OUTDIR}/fastq_screen/fastq_screen_concat/{sample}_R{{strand}}_fastq_screen.txt", strand=[1,2])
+
 	for sample in samples['sample']:
 		if single_end:
 			trimming_input += [f"{OUTDIR}/trimmed/{sample}/{sample}_R1.fastq.gz"]
@@ -224,6 +233,13 @@ def get_alignment_input():
 			alignment_input += [f"{OUTDIR}/qc/fastqc_concat/{sample}_R1_fastqc.html"]
 		else:
 			alignment_input += expand(f"{OUTDIR}/qc/fastqc_concat/{sample}_R{{strand}}_fastqc.html", strand=[1,2])
+	
+	if config["parameters"]["fastq_screen"]["enabled"]:
+		for sample in samples['sample']:
+			if single_end:
+				alignment_input += [f"{OUTDIR}/fastq_screen/fastq_screen_concat/{sample}_R1_fastq_screen.txt"]
+			else:
+				alignment_input += expand(f"{OUTDIR}/fastq_screen/fastq_screen_concat/{sample}_R{{strand}}_fastq_screen.txt", strand=[1,2])
 	
 	if chosen_aligner == "salmon":
 		alignment_input += expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf", sample=samples['sample'])

@@ -133,6 +133,9 @@ If MD5 hashes are included in `units.tsv`, the pipeline generates the hashes for
 
 cluster_rnaseq implements [FastQC](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/) to check the overal quality of the input FASTQ files. 
 
+#### Contamination
+
+FastQ Screen can optionally be enabled in order to check the input FASTQ files for contaminants.
 
 #### MultiQC report
 

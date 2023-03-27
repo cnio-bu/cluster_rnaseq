@@ -1,18 +1,29 @@
 ## Deal with optional rules (fastq_screen)
 fastq_screen = config["parameters"]["fastq_screen"]["enabled"]
 
-def create_list_files(df_row, read):
+def create_list_files_fastqc(df_row, read):
     return f"{OUTDIR}/qc/fastqc_files/{df_row.loc['sample']}_{df_row.loc['lane']}_fq{read}_fastqc.zip"
-   
 
-def create_list_concat(df_row, read):
+def create_list_files_fastq_screen(df_row, read):
+    return  f"{OUTDIR}/fastq_screen/fastq_screen_files/{df_row.loc['sample']}_{df_row.loc['lane']}_fq{read}_fastq_screen.txt"
+
+def create_list_concat_fastqc(df_row, read):
     return f"{OUTDIR}/qc/fastqc_concat/{df_row.loc['sample']}_R{read}_fastqc.zip"
 
+def create_list_concat_fastq_screen(df_row, read):
+    return f"{OUTDIR}/fastq_screen/fastq_screen_concat/{df_row.loc['sample']}_R{read}_fastq_screen.txt"
 
+   
 def multiqc_files_input(units):
-    paths_fq1 = units.apply(create_list_files, read="1", axis = 1).values.tolist()
-    paths_fq2 = units[units['fq2'].notnull()].apply(create_list_files, read="2", axis = 1).values.tolist()
-    all_paths = paths_fq1+paths_fq2
+    paths_fq1_fastqc = units.apply(create_list_files_fastqc, read="1", axis = 1).values.tolist()
+    paths_fq2_fastqc = units[units['fq2'].notnull()].apply(create_list_files_fastqc, read="2", axis = 1).values.tolist()
+    all_paths = paths_fq1_fastqc+paths_fq2_fastqc
+    # Only if Fastq_screen is performed (enabled = True), fastq_screen files will be 
+    # included in the multiqc_files_report.
+    if fastq_screen:
+        paths_fq1_fastq_screen = units.apply(create_list_files_fastq_screen, read="1", axis = 1).values.tolist()
+        paths_fq2_fastq_screen = units[units['fq2'].notnull()].apply(create_list_files_fastq_screen, read="2", axis = 1).values.tolist()
+        all_paths += paths_fq1_fastq_screen+paths_fq2_fastq_screen
     return all_paths
 
 
@@ -25,9 +36,15 @@ def multiqc_concat_input(units, step):
         return []
 
     # Quality Control for concat files --> FastQC --> Always included
-    paths_fqc_fq1 = np.unique(units.apply(create_list_concat, read="1", axis = 1).values).tolist()
-    paths_fqc_fq2 = np.unique(units[units['fq2'].notnull()].apply(create_list_concat, read="2", axis = 1).values).tolist()
+    paths_fqc_fq1 = np.unique(units.apply(create_list_concat_fastqc, read="1", axis = 1).values).tolist()
+    paths_fqc_fq2 = np.unique(units[units['fq2'].notnull()].apply(create_list_concat_fastqc, read="2", axis = 1).values).tolist()
     mqc_input = paths_fqc_fq1+paths_fqc_fq2
+
+    # Fasq_screen for concat files --> Fastq_screen --> Only included if the enabled parameter of fastq_screen is True.
+    if fastq_screen: 
+        paths_fq1_fastq_screen = np.unique(units.apply(create_list_concat_fastq_screen, read="1", axis = 1).values).tolist()
+        paths_fq2_fastq_screen = np.unique(units[units['fq2'].notnull()].apply(create_list_concat_fastq_screen, read="2", axis = 1).values).tolist()
+        mqc_input += paths_fq1_fastq_screen+paths_fq2_fastq_screen 
 
     # Trimming --> BBDUK
     mqc_input += expand(f"{OUTDIR}/trimmed/{{samples.sample}}/{{samples.sample}}.stats.txt", samples=samples.itertuples())
@@ -97,23 +114,58 @@ rule fastqc_files:
     wrapper:
         "0.74.0/bio/fastqc"
 
-# Fastq_screen for single files:
 
-if fastq_screen: 
-    rule fastq_screen_files:
-        input: 
-            fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
-        output:
-            txt=f"{OUTDIR}/fastq_screen/fastqc_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.txt"
-            png=f"{OUTDIR}/fastq_screen/fastqc_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.png"
-        threads: 
-            get_resource("fastq_screen","threads")
-        params:
-            fastq_screen_config=config["parameters"]["fastq_screen"]["fastq_screen_config"] ## Dict with the configuration.
-            subset=config["parameters"]["subset"]
-            aligner=config["parameters"]["aligner"]
-        wrapper:
-            "v1.23.4/bio/fastq_screen"
+# The rule Fastq_screen_indexes downloads pre-built Bowtie2 indices of commonly used genomes.
+# The genome indices will be downloaded to a folder named "FastQ_Screen_Genomes",  
+# where the fast_screen.conf is already placed. This config file is ready to use and 
+# lists the correct paths to the newly downloaded reference genomes.
+
+rule fastq_screen_indexes:
+    output:
+        "res/FastQ_Screen_Genomes/fastq_screen.conf"
+    conda:
+        "../envs/fastq_screen.yaml"
+    threads: 
+        get_resource("fastq_screen_indexes","threads")
+    resources:
+        mem_mb=get_resource("fastq_screen_indexes","mem_mb"),
+        walltime=get_resource("fastq_screen_indexes","walltime")
+    params:
+        outdir=config["parameters"]["fastq_screen_indexes"]["outdir"]
+    log:
+        f"{LOGDIR}/fastq_screen_indexes.log"
+    benchmark:
+        f"{LOGDIR}/fastq_screen_indexes.bmk"
+    shell:"""
+        fastq_screen --threads {threads} --get_genomes --outdir {params.outdir}/ &> {log}
+    """
+
+
+
+# Fastq_screen for single files.
+
+rule fastq_screen_files:
+    input: 
+        fastq= lambda wc: units.loc(axis=0)[(wc.sample,wc.lane)]['fq' + wc.read],
+        conf="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"])
+    output:
+        txt=f"{OUTDIR}/fastq_screen/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.txt",
+        png=f"{OUTDIR}/fastq_screen/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}_fastq_screen.png"
+    threads: 
+        get_resource("fastq_screen","threads")
+    resources:
+        mem_mb=get_resource("fastq_screen","mem_mb"),
+        walltime=get_resource("fastq_screen","walltime")
+    params:
+        fastq_screen_config="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"]),
+        subset=100000,
+        aligner='bowtie2'
+    log:
+        f"{LOGDIR}/fastq_screen/{{sample}}_{{lane}}_fq{{read}}.log"
+    benchmark:
+        f"{LOGDIR}/fastq_screen/{{sample}}_{{lane}}_fq{{read}}.bmk"
+    wrapper:
+        "v1.23.4/bio/fastq_screen"
 
 
 rule multiqc_files:
@@ -158,6 +210,31 @@ rule fastqc_concat:
         f"{LOGDIR}/fastqc_concat/{{sample}}_R{{read}}.bmk"
     wrapper:
         "0.74.0/bio/fastqc"
+
+
+## Fastq_screen for concat files
+
+rule fastq_screen_concat:
+    input:
+        f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R{{read}}.fastq.gz"
+    output:
+        txt=f"{OUTDIR}/fastq_screen/fastq_screen_concat/{{sample}}_R{{read}}_fastq_screen.txt",
+        png=f"{OUTDIR}/fastq_screen/fastq_screen_concat/{{sample}}_R{{read}}_fastq_screen.png"
+    threads: 
+        get_resource("fastq_screen","threads")
+    resources:
+        mem_mb=get_resource("fastq_screen","mem_mb"),
+        walltime=get_resource("fastq_screen","walltime")
+    params:
+        fastq_screen_config="{}/FastQ_Screen_Genomes/fastq_screen.conf".format(config["parameters"]["fastq_screen_indexes"]["outdir"]),
+        subset=100000,
+        aligner='bowtie2'
+    log:
+        f"{LOGDIR}/fastq_screen/{{sample}}_R{{read}}.log"
+    benchmark:
+        f"{LOGDIR}/fastq_screen/{{sample}}_R{{read}}.bmk"
+    wrapper:
+        "v1.23.4/bio/fastq_screen"
 
 
 rule multiqc_concat:

@@ -5,7 +5,7 @@ if downsampling:
 else:
     dir = "reads"
 
-## Let stablish rule order wheter data is single end or paired end
+## Let stablish rule order whether data is single end or paired end
 if downsampling:
     if single_end:
         ruleorder: downsample_single_end > downsample_paired_end
@@ -75,7 +75,7 @@ rule trim_adapters_single_end:
     log:
         f"{LOGDIR}/trim_adapters_single_end/{{sample}}.log",
     wrapper:
-        '0.74.0/bio/bbtools/bbduk'
+        "v1.23.5/bio/bbtools/bbduk"
 
 
 rule trim_adapters_paired_end:
@@ -97,7 +97,7 @@ rule trim_adapters_paired_end:
     log:
         f"{LOGDIR}/trim_adapters_paired_end/{{sample}}.log",
     wrapper:
-        '0.74.0/bio/bbtools/bbduk'
+        "v1.23.5/bio/bbtools/bbduk"
 
 
 if downsampling:
