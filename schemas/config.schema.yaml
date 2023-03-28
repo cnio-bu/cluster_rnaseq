@@ -71,6 +71,18 @@ properties:
                     extra:
                         type: string
 
+            fastq_screen:
+                type: object
+                properties:
+                    enabled:
+                        type: boolean
+
+            fastq_screen_indexes:
+                type: object
+                properties:
+                    outdir:
+                        type: string
+
             salmon:
                 type: object
                 properties:
@@ -139,7 +151,27 @@ properties:
                         type: integer
                     walltime:
                         type: integer
-    
+
+            fastq_screen:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer  
+
+            fastq_screen_indexes:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
             multiqc:
                 type: object
                 properties:

@@ -58,6 +58,18 @@ parameters:
         adapters: "resources/trimming/adapters.fa"
         extra: " ktrim=r k=23 mink=11 hdist=1"
 
+    # By default fastq_screen is not performed. In case the user want to run
+    # fastq_screen the enabled value must be set to True.
+    fastq_screen:
+        enabled: False
+
+    # Pre-built Bowtie2 indices of commonly used genomes may be downloaded 
+    # directly from the Babraham Bioinformatics website. These genome indices 
+    # and a configuration file named "fastq_screen.conf" will be downloaded 
+    # to a folder named "FastQ_Screen_Genomes" under the res directory.
+    fastq_screen_indexes:
+        outdir: "res"
+
     ## set it to A for automatic library detection.
     ## https://salmon.readthedocs.io/en/latest/salmon.html
     salmon:
@@ -94,12 +106,22 @@ resources:
         threads: 1
         mem_mb:  4096
         walltime: 10
-        
+   
     fastqc:
         threads: 1
         mem_mb:  4096
         walltime: 10
-        
+
+    fastq_screen:
+        threads: 8
+        mem_mb: 4096
+        walltime: 10
+
+    fastq_screen_indexes:
+        threads: 32
+        mem_mb: 64000
+        walltime: 180
+
     multiqc:
         threads: 8
         mem_mb:  4096
