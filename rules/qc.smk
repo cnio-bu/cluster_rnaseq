@@ -161,9 +161,9 @@ rule fastq_screen_files:
         subset=100000,
         aligner='bowtie2'
     log:
-        f"{LOGDIR}/fastq_screen/{{sample}}_{{lane}}_fq{{read}}.log"
+        f"{LOGDIR}/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}.log"
     benchmark:
-        f"{LOGDIR}/fastq_screen/{{sample}}_{{lane}}_fq{{read}}.bmk"
+        f"{LOGDIR}/fastq_screen_files/{{sample}}_{{lane}}_fq{{read}}.bmk"
     wrapper:
         "v1.23.4/bio/fastq_screen"
 
@@ -230,9 +230,9 @@ rule fastq_screen_concat:
         subset=100000,
         aligner='bowtie2'
     log:
-        f"{LOGDIR}/fastq_screen/{{sample}}_R{{read}}.log"
+        f"{LOGDIR}/fastq_screen_concat/{{sample}}_R{{read}}.log"
     benchmark:
-        f"{LOGDIR}/fastq_screen/{{sample}}_R{{read}}.bmk"
+        f"{LOGDIR}/fastq_screen_concat/{{sample}}_R{{read}}.bmk"
     wrapper:
         "v1.23.4/bio/fastq_screen"
 

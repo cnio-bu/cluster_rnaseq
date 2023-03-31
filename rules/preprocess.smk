@@ -75,7 +75,7 @@ rule trim_adapters_single_end:
     log:
         f"{LOGDIR}/trim_adapters_single_end/{{sample}}.log",
     wrapper:
-        "v1.23.5/bio/bbtools/bbduk"
+        "v1.25.0/bio/bbtools/bbduk"
 
 
 rule trim_adapters_paired_end:
@@ -97,7 +97,7 @@ rule trim_adapters_paired_end:
     log:
         f"{LOGDIR}/trim_adapters_paired_end/{{sample}}.log",
     wrapper:
-        "v1.23.5/bio/bbtools/bbduk"
+        "v1.25.0/bio/bbtools/bbduk"
 
 
 if downsampling:
