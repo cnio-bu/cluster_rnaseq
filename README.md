@@ -2,7 +2,7 @@
 
 # cluster_rnaseq: RNA-seq pipeline.
 
-[Pipeline status](https://gitlab.com/bu_cnio/cluster_rnaseq/commits/master)
+[Pipeline status](https://github.com/bu_cnio/cluster_rnaseq/commits/master)
 
 ## Introduction
 **cluster_rnaseq** is a **[Snakemake](https://snakemake.readthedocs.io/en/stable/) pipeline** that performs a comprehensive RNA-seq analysis, covering from the basic steps (QC, alignment, quantification) to the more advanced downstream analyses (diferential expresion). 
@@ -50,7 +50,7 @@ cluster_rnaseq requires the conda package manager in order to work. Please insta
 ### 2. Download cluster_rnaseq repository from Gitlab.
 Use git clone command to create a local copy. 
 
-    git clone https://gitlab.com/bu_cnio/cluster_rnaseq.git
+    git clone https://github.com/cnio-bu/cluster_rnaseq.git
 
 ### 3. Configure the pipeline.
 
