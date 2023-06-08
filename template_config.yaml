@@ -49,6 +49,26 @@ ref:
 
 
 parameters:
+    umi_processing: 
+        # By default RNAseq is performed without UMIs. 
+        enabled: False
+        # If the RNA contains UMIs, the UMI pattern must be specified:
+        # N bases will be treated  as UMI and X bases will be treated as
+        # library barcode that must be kept in the read. The same pattern 
+        # could be expressed as NNNNNN.
+        umi_pattern1: "XXXXXXNNNNNNNNNN"
+        # By default, it is assummed that UMI sequence it is only on 
+        # 5' end of read1. If there are UMIs on both reads, both
+        # umi_pattern1 (in read1) and umi_pattern2 (in read2) must be 
+        # specified and will be searched in the 5' end of both reads.
+        umi_pattern2: ""
+        # If one read contains umi sequences both in 5' and 3' ends, both umis
+        # must be specified in the regular expression. For example, in a 
+        # single-end paired end sequencing where forward reads contains 4 
+        # base UMI at their 5’ end and a 4 base UMI at their 3’ end  the regular 
+        # expression would be: 
+        # ^(?P<umi_1>.{4}).+(?P<umi_2>.{4})$
+
     downsampling:
         enabled: False
         n: 10000000 # Downsample to 10 million reads
@@ -97,7 +117,7 @@ parameters:
     deseq2:
         # path or URL to design matrix
         designmatrix: "designmatrix.tsv"
-        design: "~date + condition"
+        design: "~condition"
 
 
 
@@ -142,6 +162,16 @@ resources:
         mem_mb:  8192
         walltime: 60
 
+    umi_extract_single_end:
+        threads: 8
+        mem_mb: 8192
+        walltime: 60
+
+    umi_extract_paired_end:
+        threads: 8
+        mem_mb: 8192
+        walltime: 60
+
     trim_adapters_single_end:
         threads: 8
         mem_mb:  8192
@@ -176,7 +206,17 @@ resources:
         threads: 8
         mem_mb:  4096
         walltime: 10
-        
+
+    umi_dedup_single_end:
+        threads: 8
+        mem_mb:  32000
+        walltime: 120
+
+    umi_dedup_paired_end:
+        threads: 8
+        mem_mb:  64000
+        walltime: 200
+
     htseq_count:
         threads: 8
         mem_mb:  64000
@@ -186,7 +226,7 @@ resources:
         threads: 8
         mem_mb:  64000
         walltime: 120
-    
+
     fcounts_count_matrix:
         threads: 8
         mem_mb:  64000

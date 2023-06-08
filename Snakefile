@@ -44,13 +44,17 @@ def get_params(rule,param) -> int:
 		sys.exit(1)
 
 
-def get_aligner(chosen_aligner:int) -> str:
+def get_aligner(chosen_aligner:int, UMIs) -> str:
 
-	available_aligners = {0:'star', 1:'salmon', 2:'hisat2'}
+	if 	UMIs: 
+		available_aligners = {0:'star', 2:'hisat2'}
+	else:
+		available_aligners = {0:'star', 1:'salmon', 2:'hisat2'}
 	try:
 		return available_aligners[chosen_aligner]
 	except KeyError:
-		print(f'Invalid aligner choice: {chosen_aligner}')
+		print(f'Invalid aligner choice: {chosen_aligner}. Remember if ' +
+		'your RNAseq contains UMIs, only star(0) or hisat2(2) could be chosen)')
 		sys.exit(1)
 
 
@@ -124,8 +128,11 @@ designmatrix = pd.read_table(config["parameters"]["deseq2"]["designmatrix"], \
 							 dtype=str).set_index("sample", drop=False)
 validate(designmatrix, schema="schemas/designmatrix.schema.yaml")
 
+#### Get information about UMI analysis.
+UMIs = get_params("umi_processing", "enabled")
+
 #### Get aligner ####
-chosen_aligner = get_aligner(int(config['aligner']))
+chosen_aligner = get_aligner(int(config['aligner']), UMIs)
 
 #### Get quantifier ####
 chosen_quantifier = get_quantifier(int(config['quantifier']))
@@ -244,8 +251,10 @@ def get_alignment_input():
 	if chosen_aligner == "salmon":
 		alignment_input += expand(f"{OUTDIR}/quant/salmon/{{sample}}/quant.sf", sample=samples['sample'])
 	else:
+		#if UMIs:
+			#alignment_input += expand(f"{OUTDIR}/dedup/alignments/{{sample}}/deduplicated.bam", sample=samples['sample'])
+		
 		alignment_input += expand(f"{OUTDIR}/mapped/{chosen_aligner}/{{sample}}/Aligned.sortedByCoord.out.bam", sample=samples['sample'])
-	
 	#alignment_input += [f"{OUTDIR}/multiqc/multiqc_run_report.html"]
 	return alignment_input
 

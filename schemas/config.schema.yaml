@@ -54,6 +54,16 @@ properties:
 
     parameters:
         properties:
+            umi_processing:
+                type: object
+                properties:
+                    enabled:
+                        type: boolean
+                    umi_pattern1:
+                        type: string
+                    umi_pattern2:
+                        type: string
+
             downsampling:
                 type: object
                 properties:
@@ -211,7 +221,27 @@ properties:
                         type: integer
                     walltime:
                         type: integer
-                        
+            
+            umi_extract_single_end:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+
+            umi_extract_paired_end:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer    
+                       
             trim_adapters_single_end:
                 type: object
                 properties:
@@ -273,6 +303,26 @@ properties:
                         type: integer
 
             bam_indexing:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            umi_dedup_single_end:
+                type: object
+                properties:
+                    threads:
+                        type: integer
+                    mem:
+                        type: integer
+                    walltime:
+                        type: integer
+            
+            umi_dedup_paired_end:
                 type: object
                 properties:
                     threads:
@@ -415,3 +465,4 @@ properties:
 required:
     - samples
     - units
+    

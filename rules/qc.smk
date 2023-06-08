@@ -54,7 +54,7 @@ def multiqc_concat_input(units, step):
     
     # Aligment
     if chosen_aligner == "star":
-        mqc_input += expand(f"{OUTDIR}/mapped/star/{{samples.sample}}/Aligned.sortedByCoord.out.bam", samples=samples.itertuples())
+        mqc_input += expand(f"{OUTDIR}/mapped/star/{{samples.sample}}/Aligned.sortedByCoord.out.bam", samples=samples.itertuples())   
     elif chosen_aligner == "salmon":
         mqc_input += expand(f"{OUTDIR}/quant/salmon/{{samples.sample}}/quant.sf", samples=samples.itertuples())
     elif chosen_aligner == "hisat2":
@@ -65,6 +65,10 @@ def multiqc_concat_input(units, step):
     if step == "alignment":
         return mqc_input
     
+    # Deduplication --> UMI-tools
+    if UMIs:
+        mqc_input += expand(f"{LOGDIR}/dedup/{{samples.sample}}/{{samples.sample}}.log", samples=samples.itertuples())
+
     # Quantification
     if chosen_aligner == "star" or chosen_aligner == "hisat2":
         if chosen_quantifier == "htseq":

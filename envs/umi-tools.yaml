@@ -1,0 +1,6 @@
+name: umi-tools
+channels:
+    - conda-forge
+    - bioconda
+dependencies:
+    - umi_tools=1.1.4
