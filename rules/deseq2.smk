@@ -28,7 +28,9 @@ rule deseq2_diffexp:
         dds = rules.deseq2_init.output.dds
     output:
         xlsx = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.xlsx",
-        tsv = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv"
+        tsv = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_diffexp.tsv",
+        xlsx_lfcShrink = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_lfcShrink_diffexp.xlsx",
+        tsv_lfcShrink = f"{OUTDIR}/deseq2/{deseq_path}/{{contrast}}/{{contrast}}_lfcShrink_diffexp.tsv"
     threads:
         get_resource("deseq2_diffexp", "threads")
     resources:
