@@ -195,10 +195,17 @@ Differential expression is performed with the [Deseq2](https://bioconductor.org/
 * Design of the experiment, specified in `config.yaml`.
 * File `samples.tsv` to know which samples should be taken into account.
 
-Once the Deseq object is created, the second step is to carry out the differential expression from the *dds.rds* object generated above. For each contrast returns two equivalent files: 
+Once the Deseq object is created, the second step is to carry out the differential expression from the *dds.rds* object generated above. For each contrast it returns four files: 
+
+Two equivalent files with the default deseq2 results:
 
 * `(contrast)_diffexp.tsv`, a file plain text file format the data separated by tabs.
 * `(contrast)_diffexp.xlsx`, a file in excel format with the data formatted in a similar way to [Nextpresso](http://ubio.bioinfo.cnio.es/people/ograna/nextpresso/) output.
+
+And two equivalent files with the deseq2 results where the log2 foldchange estimates are shrunken using the function lfcShrink() from Deseq2. This shrinkage of the log2 foldchange estimates toward zero is performed when the information for a gene is low (low counts and high dispersion values). The two equivalent files contain the same columns as the default results, except for the 'stats' column which is not present in the output with shrunken log2 foldchange estimates:
+
+* `(contrast)_lfcShrink_diffexp.tsv`, a file plain text file format the data separated by tabs.
+* `(contrast)_lfcShrink_diffexp.xlsx`, a file in excel format with the data formatted in a similar way to [Nextpresso](http://ubio.bioinfo.cnio.es/people/ograna/nextpresso/) output.
 
 
 ### 6. Plots.
