@@ -24,8 +24,10 @@ ref <- snakemake@params[["ref_levels"]]
 norm_counts <- read.table(norm_counts)
 
 # Get differential expression results
-diffexp <- read.table(diffexp, header = TRUE, row.names = 1)
-
+diffexp <- read.table(diffexp, , header = TRUE, row.names = 1, sep = '\t', 
+                      blank.lines.skip = FALSE, quote = "")
+diffexp <- diffexp[c("baseMean", "log2FoldChange", "lfcSE", 
+                   "stat", "pvalue", "padj")]
 # Get design matrix
 designmatrix <- read.table(designmatrix, header = TRUE, row.names = 1)
 
