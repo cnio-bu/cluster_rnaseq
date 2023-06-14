@@ -2,7 +2,7 @@
 
 # cluster_rnaseq: RNA-seq pipeline.
 
-[Pipeline status](https://gitlab.com/bu_cnio/cluster_rnaseq/commits/master)
+[Pipeline status](https://github.com/cnio-bu/cluster_rnaseq/commits/master)
 
 ## Introduction
 **cluster_rnaseq** is a **[Snakemake](https://snakemake.readthedocs.io/en/stable/) pipeline** that performs a comprehensive RNA-seq analysis, covering from the basic steps (QC, alignment, quantification) to the more advanced downstream analyses (diferential expresion). 
@@ -47,10 +47,10 @@ A general description of these files follows. See the *Usage* section for more d
 
 cluster_rnaseq requires the conda package manager in order to work. Please install conda by following the [bioconda installation instructions](http://bioconda.github.io/user/install.html#install-conda). In addition, of course, it is essential to install Snakemake; following the steps in the [Snakemake documentation](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html). 
 
-### 2. Download cluster_rnaseq repository from Gitlab.
+### 2. Download cluster_rnaseq repository from GitHub.
 Use git clone command to create a local copy. 
 
-    git clone https://gitlab.com/bu_cnio/cluster_rnaseq.git
+    git clone https://github.com/cnio-bu/cluster_rnaseq.git
 
 ### 3. Configure the pipeline.
 
@@ -62,14 +62,14 @@ Before executing the pipeline, the users must configure it according to their sa
 
 This is the pipeline configuration file, where you can tune all the available parameters to customise your RNAseq analysis. Here the aligner and quantifier to be used are indicated, as well as the necessary input or output file paths and a resource management section for each rule. 
 
-The example file ([template_config.yaml](https://gitlab.com/bu_cnio/cluster_rnaseq/-/blob/master/template_config.yaml)) features extensive inline documentation. Rename it to `config.yaml` to use it during your execution.
+The example file ([template_config.yaml](https://github.com/cnio-bu/cluster_rnaseq/blob/master/template_config.yaml)) features extensive inline documentation. Rename it to `config.yaml` to use it during your execution.
 
 
 #### **b. units.tsv**
 
 This file is used to configure the FASTQ input files.
 
-An example file ([template_units.tsv](https://gitlab.com/bu_cnio/cluster_rnaseq/-/blob/master/template_units.tsv)) is included in the repository.
+An example file ([template_units.tsv](https://github.com/cnio-bu/cluster_rnaseq/blob/master/template_units.tsv)) is included in the repository.
 
 Rename it to `units.tsv` and edit its contents according to the following table:
 
@@ -89,14 +89,14 @@ The first three columns, "sample", "lane" and "fq1", are mandatory and defines t
 
 This table contains the name of each sample and an indication to include it (if diffexp = True) or exclude it (if diffexp = False) from the differential expression analysis. 
 
-An example file ([template_samples.tsv)](https://gitlab.com/bu_cnio/cluster_rnaseq/-/blob/master/template_samples.tsv) is included in the repository. Rename it to `samples.tsv` and edit its contents. 
+An example file ([template_samples.tsv)](https://github.com/cnio-bu/cluster_rnaseq/blob/master/template_samples.tsv) is included in the repository. Rename it to `samples.tsv` and edit its contents. 
 
 
 #### **d. designmatrix.tsv**
 
 This is the table with the experimental conditions of each sample. The control condition must be preceded with an asterisk. Extra columns can be added as batch variables to correct the batch effect.
 
-An example file ([template_designmatrix.tsv)](https://gitlab.com/bu_cnio/cluster_rnaseq/-/blob/master/template_designmatrix.tsv) is included in the repository. Rename it to `designmatrix.tsv` and edit its contents before performing the differential expression. 
+An example file ([template_designmatrix.tsv)](https://github.com/cnio-bu/cluster_rnaseq/blob/master/template_designmatrix.tsv) is included in the repository. Rename it to `designmatrix.tsv` and edit its contents before performing the differential expression. 
 
 
 
@@ -149,7 +149,7 @@ Before starting the analysis, the samples are concatenated by their lane, to obt
 
 After this, there is the possibility of standardizing the number of reads of the files by performing a downsampling of the samples. The *downsamplig* parameter of `config.yaml` must be True and the desired number of reads for each sample must be indicated; as well as a seed to control the randomness of the analysys and allow to be replicated.
 
-Finally, trimming is performed to remove the adapters used during sequencing. The [bbduk](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbduk-guide/) tool, from the [BBTools](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/) package, is used. By default, the file [adapters.fa](https://gitlab.com/bu_cnio/cluster_rnaseq/-/blob/master/resources/trimming/adapters.fa) with different adapters is passed to the tool. 
+Finally, trimming is performed to remove the adapters used during sequencing. The [bbduk](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/bb-tools-user-guide/bbduk-guide/) tool, from the [BBTools](https://jgi.doe.gov/data-and-tools/software-tools/bbtools/) package, is used. By default, the file [adapters.fa](https://github.com/cnio-bu/cluster_rnaseq/blob/master/resources/trimming/adapters.fa) with different adapters is passed to the tool. 
 
 
 ### 3. Alignment.
