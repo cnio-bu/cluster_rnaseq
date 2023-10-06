@@ -4,7 +4,6 @@ sink(log, type = "message")
 
 suppressMessages(library("DESeq2"))
 suppressMessages(library("openxlsx"))
-suppressMessages(library("org.Hs.eg.db"))
 suppressMessages(library("AnnotationDbi"))
 
 ## PARALLELIZATION ##
@@ -17,35 +16,43 @@ if (snakemake@threads > 1) {
 
 ## SNAKEMAKE I/O ##
 dds <- snakemake@input[["dds"]]
+geneID_to_geneSYMBOL <- snakemake@input[["geneID_to_geneSYMBOL"]]
 
 ## SNAKEMAKE PARAMS ##
 condition <- snakemake@params[["condition"]]
 levels <- snakemake@params[["levels"]]
+specie <- snakemake@params[["specie"]]
+
+
+# Call the proper library according to the specie.
+if (specie == 'human'){
+    database <- 'org.Hs.eg.db'
+} else{
+    database <- 'org.Mm.eg.db'
+}
+
+suppressMessages(library(database, character.only = TRUE))
+object_db <- eval(parse(text=database))
 
 ## CODE ##
 # Get dds
 dds <- readRDS(dds)
+geneID_to_geneSYMBOL <- read.table(geneID_to_geneSYMBOL, sep = "\t")
+
+print(class(geneID_to_geneSYMBOL))
+print(geneID_to_geneSYMBOL)
 
 # Get results
 res <- results(dds, contrast = c(condition, levels), alpha=0.05, parallel = parallel)
 
 # Annotate the GeneSymbol and complete GeneName from the ENSEMBL Gene ID.
-ensg_res <- rownames(res)
-ensemblGene_DEA <- gsub("\\.[0-9]*$", "", ensg_res)
-
-ensg_symbol <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
+ensemblGene_DEA <- gsub("\\.[0-9]*$", "", rownames(geneID_to_geneSYMBOL))
+res$gene_symbol <- as.data.frame(mapIds(object_db, keys = ensemblGene_DEA,
                                     column = "SYMBOL", keytype = "ENSEMBL"))
-colnames(ensg_symbol) <- "GeneSymbol"
-ensg_genename <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
+res$gene_name <- as.data.frame(mapIds(object_db, keys = ensemblGene_DEA,
                                       column = "GENENAME", keytype = "ENSEMBL"))
-colnames(ensg_genename) <- "GeneName"
-annot <- merge(ensg_symbol, ensg_genename, by = "row.names", all = TRUE)
-rownames(res) <- ensemblGene_DEA
-res <- merge(as.data.frame(res), annot, by.x = "row.names", by.y = 1, all = TRUE)
-ENSG_res_list <- as.list(ensg_res)
-names(ENSG_res_list) <- ensemblGene_DEA
-rownames(res) <- ENSG_res_list[res$Row.names]
-col_order <- c("GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
+res$EnsemblGeneID <- rownames(res)
+col_order <- c("EnsemblGeneID", "GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
                "lfcSE", "stat", "pvalue", "padj")
 res <- res[, col_order]
 
@@ -107,24 +114,16 @@ coef <- paste0(c(condition, levels[1], "vs", levels[2]), collapse = "_")
 res_shrink <- lfcShrink(dds, coef=coef, type="apeglm")
 
 # Annotate the GeneSymbol and complete GeneName from the ENSEMBL Gene ID.
-ensg_res <- rownames(res_shrink)
-ensemblGene_DEA <- gsub("\\.[0-9]*$", "", ensg_res)
-
-ensg_symbol <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
+ensemblGene_DEA <- gsub("\\.[0-9]*$", "", rownames(res_shrink))
+res_shrink$gene_symbol <- as.data.frame(mapIds(object_db, keys = ensemblGene_DEA,
                                     column = "SYMBOL", keytype = "ENSEMBL"))
-colnames(ensg_symbol) <- "GeneSymbol"
-ensg_genename <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
+res_shrink$gene_name <- as.data.frame(mapIds(object_db, keys = ensemblGene_DEA,
                                       column = "GENENAME", keytype = "ENSEMBL"))
-colnames(ensg_genename) <- "GeneName"
-annot <- merge(ensg_symbol, ensg_genename, by = "row.names", all = TRUE)
-rownames(res_shrink) <- ensemblGene_DEA
-res_shrink <- merge(as.data.frame(res_shrink), annot, by.x = "row.names", by.y = 1, all = TRUE)
-ENSG_res_list <- as.list(ensg_res)
-names(ENSG_res_list) <- ensemblGene_DEA
-rownames(res_shrink) <- ENSG_res_list[res_shrink$Row.names]
-col_order <- c("GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
-               "lfcSE", "pvalue", "padj")
+res_shrink$EnsemblGeneID <- rownames(res_shrink)
+col_order <- c("EnsemblGeneID", "GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
+               "lfcSE", "stat", "pvalue", "padj")
 res_shrink <- res_shrink[, col_order]
+
 
 # Sort by adjusted p-value
 res_shrink <- res_shrink[order(res_shrink$padj, decreasing = FALSE), ]

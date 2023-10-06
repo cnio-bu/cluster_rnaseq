@@ -1,11 +1,23 @@
 log <- file(snakemake@log[[1]], open = "wt")
 sink(log)
 sink(log, type = "message")
+specie <- snakemake@params[["specie"]]
+
+# Call the proper library according to the specie.
+if (specie == 'human'){
+    database <- 'org.Hs.eg.db'
+} else{
+    database <- 'org.Mm.eg.db'
+}
+
+suppressMessages(library(database, character.only = TRUE))
+object_db <- eval(parse(text=database))
 
 suppressMessages(library("DESeq2"))
 suppressMessages(library("tidyr"))
 suppressMessages(library("dplyr"))
 suppressMessages(library("limma"))
+
 
 ## PARALLELIZATION ##
 parallel <- FALSE
@@ -69,7 +81,19 @@ dds <- dds[keep, ]
 dds <- DESeq(dds, parallel = parallel)
 
 # Normalized counts
-norm_counts <- counts(dds, normalized = TRUE)
+norm_counts <- as.data.frame(counts(dds, normalized = TRUE))
+col.names <- colnames(norm_counts)
+
+# Add a column with the geneSYMBOLs
+norm_counts$geneSYMBOL<- mapIds(object_db, keys = gsub("\\.[0-9]*$", "", 
+                                rownames(norm_counts)), column = "SYMBOL", 
+                                keytype = "ENSEMBL")
+
+# replace NA for geneIDs
+norm_counts$geneSYMBOL <- coalesce(norm_counts$geneSYMBOL, rownames(norm_counts))
+
+# put geneSYMBOL column at the begining
+norm_counts <- norm_counts[,c("geneSYMBOL",  col.names)]
 
 # Data transformation
 vsd <- vst(dds, blind = FALSE)
@@ -77,8 +101,13 @@ vsd <- vst(dds, blind = FALSE)
 # Save objects
 saveRDS(dds, file = snakemake@output[["dds"]])
 write.table(norm_counts, file = snakemake@output[["normalized_counts"]], 
-            sep = "\t", quote = FALSE, col.names = NA)
+            sep = "\t", quote = FALSE, row.names = FALSE)
 saveRDS(vsd, file = snakemake@output[["vst"]][1])
+
+write.table(as.data.frame(norm_counts["geneSYMBOL"], rownames(norm_counts), 
+                          col.names = c("geneID", "geneSYMBOL")),
+                          file = snakemake@output[["geneID_to_geneSYMBOL"]], 
+                          sep = "\t", col.names = TRUE, quote = FALSE)
 
 # If there is a batch, perform batch correction
 if (!is.null(batch_variables)) {

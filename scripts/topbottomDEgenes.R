@@ -26,8 +26,10 @@ norm_counts <- read.table(norm_counts)
 # Get differential expression results
 diffexp <- read.table(diffexp, , header = TRUE, row.names = 1, sep = '\t', 
                       blank.lines.skip = FALSE, quote = "")
+ensg_symbol <- data.frame(EnsemblGeneID = rownames(diffexp), GeneSymbol = diffexp["GeneSymbol"])
 diffexp <- diffexp[c("baseMean", "log2FoldChange", "lfcSE", 
                    "stat", "pvalue", "padj")]
+
 # Get design matrix
 designmatrix <- read.table(designmatrix, header = TRUE, row.names = 1)
 
@@ -59,13 +61,17 @@ levels_colors <- list(condition = levels_colors[["condition"]]
 # Get top 25 and bottom 25 DE genes
 top <- diffexp %>% arrange(desc(log2FoldChange)) %>% 
   top_n(n = 25, wt = log2FoldChange) %>% select(rowname) %>% pull
+top_symbols <- ensg_symbol[which(ensg_symbol["EnsemblGeneID"] == top), "GeneSymbol"]
 
 bottom <-diffexp %>% arrange(log2FoldChange) %>% 
   top_n(n = -25, wt = log2FoldChange) %>% select(rowname) %>% pull
+bottom_symbols <- ensg_symbol[which(ensg_symbol["EnsemblGeneID"] == bottom), "GeneSymbol"]
 
 # Subset the normalized count matrix and scale by row
 norm_counts <- t(apply(norm_counts[c(top, bottom), samples], 1, scale))
 colnames(norm_counts) <- samples
+gene_symbols <- c(top_symbols, bottom_symbols)
+rownames(norm_counts) <- gene_symbols
 
 # Specify the colors and breaks of the plot
 colors <- colorRampPalette(c("blue", "white", "red"))(100)
