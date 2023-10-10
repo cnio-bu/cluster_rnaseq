@@ -26,10 +26,8 @@ norm_counts <- read.table(norm_counts)
 # Get differential expression results
 diffexp <- read.table(diffexp, , header = TRUE, row.names = 1, sep = '\t', 
                       blank.lines.skip = FALSE, quote = "")
-ensg_symbol <- data.frame(EnsemblGeneID = rownames(diffexp), GeneSymbol = diffexp["GeneSymbol"])
 diffexp <- diffexp[c("baseMean", "log2FoldChange", "lfcSE", 
                    "stat", "pvalue", "padj")]
-
 # Get design matrix
 designmatrix <- read.table(designmatrix, header = TRUE, row.names = 1)
 
