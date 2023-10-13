@@ -4,8 +4,6 @@ sink(log, type = "message")
 
 suppressMessages(library("DESeq2"))
 suppressMessages(library("openxlsx"))
-suppressMessages(library("org.Hs.eg.db"))
-suppressMessages(library("AnnotationDbi"))
 
 ## PARALLELIZATION ##
 parallel <- FALSE
@@ -29,26 +27,6 @@ dds <- readRDS(dds)
 # Get results
 res <- results(dds, contrast = c(condition, levels), alpha=0.05, parallel = parallel)
 
-# Annotate the GeneSymbol and complete GeneName from the ENSEMBL Gene ID.
-ensg_res <- rownames(res)
-ensemblGene_DEA <- gsub("\\.[0-9]*$", "", ensg_res)
-
-ensg_symbol <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
-                                    column = "SYMBOL", keytype = "ENSEMBL"))
-colnames(ensg_symbol) <- "GeneSymbol"
-ensg_genename <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
-                                      column = "GENENAME", keytype = "ENSEMBL"))
-colnames(ensg_genename) <- "GeneName"
-annot <- merge(ensg_symbol, ensg_genename, by = "row.names", all = TRUE)
-rownames(res) <- ensemblGene_DEA
-res <- merge(as.data.frame(res), annot, by.x = "row.names", by.y = 1, all = TRUE)
-ENSG_res_list <- as.list(ensg_res)
-names(ENSG_res_list) <- ensemblGene_DEA
-rownames(res) <- ENSG_res_list[res$Row.names]
-col_order <- c("GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
-               "lfcSE", "stat", "pvalue", "padj")
-res <- res[, col_order]
-
 # Sort by adjusted p-value
 res <- res[order(res$padj, decreasing = FALSE), ]
 
@@ -57,8 +35,8 @@ write.table(res, file = snakemake@output[["tsv"]], sep = "\t", quote = FALSE,
             col.names = NA)
 
 # Add Name column
-res$EnsemblGeneID <- rownames(res)
-res <- res[c("EnsemblGeneID", colnames(res)[1:(ncol(res)-1)])]
+res$Name <- rownames(res)
+res <- res[c("Name", colnames(res)[1:(ncol(res)-1)])]
 
 # Green and red styles for formatting excel
 redStyle <- createStyle(fontColour = "#FF1F00", bgFill = "#F6F600")
@@ -88,13 +66,13 @@ writeData(wb, sheet, res, startRow = 6)
 addStyle(wb, sheet, cols = 1:ncol(res), rows = 6, style = boldStyle, 
          gridExpand = TRUE)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7>0, $I7<0.05, NOT(ISBLANK($I7)))", style = redStyle)
+                      rule = "AND($C7>0, $G7<0.05, NOT(ISBLANK($G7)))", style = redStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7>0, OR($I7>0.05, ISBLANK($I7)))", style = redPlainStyle)
+                      rule = "AND($C7>0, OR($G7>0.05, ISBLANK($G7)))", style = redPlainStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7<0, $I7<0.05, NOT(ISBLANK($I7)))", style = greenStyle)
+                      rule = "AND($C7<0, $G7<0.05, NOT(ISBLANK($G7)))", style = greenStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7<0, OR($I7>0.05, ISBLANK($I7)))", style = greenPlainStyle)
+                      rule = "AND($C7<0, OR($G7>0.05, ISBLANK($G7)))", style = greenPlainStyle)
 setColWidths(wb, sheet, 1:ncol(res), widths = 13)
 
 # Save excel
@@ -165,13 +143,13 @@ writeData(wb, sheet, res_shrink, startRow = 6)
 addStyle(wb, sheet, cols = 1:ncol(res_shrink), rows = 6, style = boldStyle, 
          gridExpand = TRUE)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7>0, $H7<0.05, NOT(ISBLANK($H7)))", style = redStyle)
+                      rule = "AND($C7>0, $G7<0.05, NOT(ISBLANK($G7)))", style = redStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7>0, OR($H7>0.05, ISBLANK($H7)))", style = redPlainStyle)
+                      rule = "AND($C7>0, OR($G7>0.05, ISBLANK($G7)))", style = redPlainStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7<0, $H7<0.05, NOT(ISBLANK($H7)))", style = greenStyle)
+                      rule = "AND($C7<0, $G7<0.05, NOT(ISBLANK($G7)))", style = greenStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7<0, OR($H7>0.05, ISBLANK($H7)))", style = greenPlainStyle)
+                      rule = "AND($C7<0, OR($G7>0.05, ISBLANK($G7)))", style = greenPlainStyle)
 setColWidths(wb, sheet, 1:ncol(res_shrink), widths = 13)
 
 # Save excel

@@ -10,8 +10,6 @@ dependencies:
   - r-tidyr
   - r-dplyr 
   - bioconductor-limma
-  - bioconductor-org.Hs.eg.db
-  - bioconductor-AnnotationDbi
   - bioconductor-apeglm
 
 
