@@ -1,9 +1,9 @@
 ## Deal with optional rules
 downsampling = config["parameters"]["downsampling"]["enabled"]
 if downsampling:
-    dir = "downsampled"
+    dir_path = "downsampled"
 else:
-    dir = "reads"
+    dir_path = "reads"
 
 ## Let stablish rule order whether data is single end or paired end
 if downsampling:
@@ -58,7 +58,7 @@ rule concat_R2_reads:
 
 rule trim_adapters_single_end:
     input:
-        sample=[OUTDIR + '/' + dir + '/{sample}_R1.fastq.gz']
+        sample=[OUTDIR + '/' + dir_path + '/{sample}_R1.fastq.gz']
     output:
         trimmed=OUTDIR + '/trimmed/{sample}/{sample}_R1.fastq.gz',
         singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
@@ -80,7 +80,7 @@ rule trim_adapters_single_end:
 
 rule trim_adapters_paired_end:
     input:
-        sample=expand(OUTDIR + '/{dir}/{{sample}}_R{strand}.fastq.gz', dir=dir, strand=[1,2])
+        sample=expand(OUTDIR + '/{dir_path}/{{sample}}_R{strand}.fastq.gz', dir_path=dir_path, strand=[1,2])
     output:
         trimmed=expand(OUTDIR + '/trimmed/{{sample}}/{{sample}}_R{strand}.fastq.gz', strand=[1,2]),
         singleton=OUTDIR + '/trimmed/{sample}/{sample}.single.fastq.gz',
