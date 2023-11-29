@@ -24,7 +24,7 @@ rule salmon_quant_se:
         get_resource('salmon_quant', 'threads')
     resources:
         mem_mb=get_resource('salmon_quant', 'mem_mb'),
-        walltime=get_resource('salmon_quant', 'walltime')
+        runtime=get_resource('salmon_quant', 'runtime')
     params:
         libtype=get_params('salmon', 'libtype'),
         quant_directory=directory(f"{OUTDIR}/quant/salmon/{{sample}}")
@@ -46,7 +46,7 @@ rule salmon_quant_paired:
         get_resource('salmon_quant', 'threads')
     resources:
         mem_mb=get_resource('salmon_quant', 'mem_mb'),
-        walltime=get_resource('salmon_quant', 'walltime')
+        runtime=get_resource('salmon_quant', 'runtime')
     params:
         libtype=get_params('salmon', 'libtype'),
         quant_directory=directory(f"{OUTDIR}/quant/salmon/{{sample}}")
@@ -69,7 +69,7 @@ rule star_align_se:
         get_resource('star_align', 'threads')
     resources:
         mem_mb=get_resource('star_align', 'mem_mb'),
-        walltime=get_resource('star_align', 'walltime')
+        runtime=get_resource('star_align', 'runtime')
     params:
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate"
@@ -93,7 +93,7 @@ rule star_align_paired:
         get_resource("star_align", "threads")
     resources:
         mem_mb=get_resource('star_align', 'mem_mb'),
-        walltime=get_resource('star_align', 'walltime')
+        runtime=get_resource('star_align', 'runtime')
     params:
         # optional parameters
         extra="--outSAMtype BAM SortedByCoordinate"
@@ -121,7 +121,7 @@ rule hisat2_align:
         get_resource("hisat2_align", "threads")
     resources:
         mem_mb=get_resource('hisat2_align', 'mem_mb'),
-        walltime=get_resource('hisat2_align', 'walltime')
+        runtime=get_resource('hisat2_align', 'runtime')
     wrapper:
         "0.74.0/bio/hisat2/align"
 
@@ -137,7 +137,7 @@ rule hisat2_sort:
         get_resource("hisat2_sort", "threads")
     resources:
         mem_mb=get_resource('hisat2_sort', 'mem_mb'),
-        walltime=get_resource('hisat2_sort', 'walltime')
+        runtime=get_resource('hisat2_sort', 'runtime')
     conda:
         '../envs/aligners.yaml'
     shell:

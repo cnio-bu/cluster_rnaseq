@@ -141,7 +141,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             fastqc:
@@ -151,7 +151,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             fastq_screen:
@@ -161,7 +161,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer  
 
             fastq_screen_indexes:
@@ -171,7 +171,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             multiqc:
@@ -181,7 +181,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             concat:
@@ -191,7 +191,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             downsample_single_end:
@@ -201,7 +201,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
     
             downsample_paired_end:
@@ -211,7 +211,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
                         
             trim_adapters_single_end:
@@ -221,7 +221,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             trim_adapters_paired_end:
@@ -231,7 +231,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer  
                                   
             salmon_quant:
@@ -241,7 +241,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             star_align:
@@ -251,7 +251,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             hisat2_align:
@@ -261,7 +261,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             hisat2_sort:
@@ -271,7 +271,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             bam_indexing:
@@ -281,7 +281,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             htseq_count:
@@ -291,7 +291,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             featureCounts:
@@ -301,7 +301,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             salmon_matrix_from_quants:
@@ -311,7 +311,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
                
             salmon_index:
@@ -321,7 +321,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             star_index:
@@ -331,7 +331,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             hisat2_index:
@@ -341,7 +341,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             htseq_count_matrix:
@@ -351,7 +351,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             deseq2_init:
@@ -361,7 +361,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             deseq2_diffexp:
@@ -371,7 +371,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             pca:
@@ -381,7 +381,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             ma:
@@ -391,7 +391,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
             distance:
@@ -401,7 +401,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
             
             expression_heatmap:
@@ -411,7 +411,7 @@ properties:
                         type: integer
                     mem:
                         type: integer
-                    walltime:
+                    runtime:
                         type: integer
 
 required:

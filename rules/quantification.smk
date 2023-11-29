@@ -17,7 +17,7 @@ rule bam_indexing:
         get_resource("bam_indexing", "threads")
     resources:
         mem_mb=get_resource('bam_indexing', 'mem_mb'),
-        walltime=get_resource('bam_indexing', 'walltime')
+        runtime=get_resource('bam_indexing', 'runtime')
     conda:
         '../envs/aligners.yaml'
     shell:
@@ -35,7 +35,7 @@ rule htseq_count:
         get_resource('htseq_count', 'threads')
     resources:
         mem_mb=get_resource('htseq_count', 'mem_mb'),
-        walltime=get_resource('htseq_count', 'walltime')
+        runtime=get_resource('htseq_count', 'runtime')
     params:
         annotation= lambda x: config['ref'][chosen_aligner]['annotation'] if chosen_aligner != 'salmon' else '',
         extra=config['parameters']['htseq-count']['extra'],
@@ -58,7 +58,7 @@ rule htseq_count_matrix:
         get_resource("htseq_count_matrix", "threads")
     resources:
         mem_mb=get_resource("htseq_count_matrix", "mem_mb"),
-        walltime=get_resource("htseq_count_matrix", "walltime")
+        runtime=get_resource("htseq_count_matrix", "runtime")
     log: f"{LOGDIR}/deseq2/{chosen_aligner}/htseq_count_matrix.log"
     conda:
         '../envs/deseq2.yaml'
@@ -77,7 +77,7 @@ rule featurecounts:
         get_resource('featureCounts', 'threads')
     resources:
         mem_mb=get_resource('featureCounts', 'mem_mb'),
-        walltime=get_resource('featureCounts', 'walltime')
+        runtime=get_resource('featureCounts', 'runtime')
     params:
         args= lambda wc: featurecounts_args(wc.sample),
         extra= config['parameters']['featureCounts']['extra'],
@@ -99,7 +99,7 @@ rule fcounts_count_matrix:
         get_resource('fcounts_count_matrix', 'threads')
     resources:
         mem_mb=get_resource('fcounts_count_matrix', 'mem_mb'),
-        walltime=get_resource('fcounts_count_matrix', 'walltime')
+        runtime=get_resource('fcounts_count_matrix', 'runtime')
     params:
         samples=config['samples'],
     script:
@@ -119,7 +119,7 @@ rule salmon_matrix_from_quants:
         get_resource('salmon_matrix_from_quants', 'threads')
     resources:
         mem_mb=get_resource('salmon_matrix_from_quants', 'mem_mb'),
-        walltime=get_resource('salmon_matrix_from_quants', 'walltime')
+        runtime=get_resource('salmon_matrix_from_quants', 'runtime')
     params:
         salmon_quant_directory = f"{OUTDIR}/quant/salmon",
         samples                  = config['samples']

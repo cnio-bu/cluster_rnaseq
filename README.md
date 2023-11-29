@@ -274,9 +274,9 @@ Additionally, the user might use the Snakemake rules names as targets, which are
 
 ## Cluster Usage
 
-This pipeline is part of the tools developed by the CNIO Bioinformatics Unit. Although it can be launched on any machine, it is designed to be executed in environments with high computational capacity such as the cluster that the center has. This uses slurm as a task manager, such a way that to launch the pipeline properly you must add the slurm profile created to launch the snakemake tools. So the command is: 
+This pipeline is part of the tools developed by the CNIO Bioinformatics Unit. Although it can be launched on any machine, it is designed to be executed in environments with high computational capacity such as the cluster that the center has. This uses Slurm as a task manager, such a way that to launch the pipeline properly you must add the [slurm parameter](https://snakemake.readthedocs.io/en/stable/executing/cluster.html#executing-on-slurm-clusters) to allow the integration between snakemake and the Slurm batch system. So the command is: 
 
-    snakemake --use-conda --profile $SMK_PROFILE_SLURM -j 32 
+    snakemake --use-conda --slurm -j 32 
 
 In addition, to save the user time and space, there are shared resources in the CNIO cluster that can be referenced from cluster_rnaseq, such as the aligner indices that take time to create. In the file `template_config.yaml` are the paths to some of these resources which are updated periodically. 
 

@@ -9,7 +9,7 @@ rule deseq2_init:
         get_resource("deseq2_init", "threads")
     resources:
         mem_mb=get_resource("deseq2_init", "mem_mb"),
-        walltime=get_resource("deseq2_init", "walltime")
+        runtime=get_resource("deseq2_init", "runtime")
     params:
         samples=config['samples'],
         designmatrix=config['parameters']['deseq2']['designmatrix'],
@@ -35,7 +35,7 @@ rule deseq2_diffexp:
         get_resource("deseq2_diffexp", "threads")
     resources:
         mem_mb=get_resource("deseq2_diffexp", "mem_mb"),
-        walltime=get_resource("deseq2_diffexp", "walltime")
+        runtime=get_resource("deseq2_diffexp", "runtime")
     params:
         condition=var_interest,
         levels=lambda wildcards: contrasts[wildcards.contrast]

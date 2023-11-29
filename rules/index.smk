@@ -6,7 +6,7 @@ rule generate_decoy_sequences:
     output:
         decoys=temp(config["outdir"]+"/decoys.txt")
     resources:
-        walltime=1
+        runtime=1
     shell: 
         """
         grep "^>" <(gunzip -c {input.genome}) | cut -d " "  -f 1 > {output.decoys}
@@ -21,7 +21,7 @@ rule build_gentrome:
     output:
         gentrome=temp(config["outdir"]+"/gentrome.fa.gz")
     resources:
-        walltime=1
+        runtime=1
     shell:
         'cat {input.transcriptome} {input.genome} > {output.gentrome}'
 
@@ -36,7 +36,7 @@ rule salmon_index:
         get_resource('salmon_index', 'threads')
     resources:
         mem_mb=get_resource('salmon_index', 'mem_mb'),
-        walltime=get_resource('salmon_index', 'walltime')
+        runtime=get_resource('salmon_index', 'runtime')
     params:
         gencode = IS_GENCODE # Dirty, but necessary. See Snakefile.
     log:
@@ -58,7 +58,7 @@ rule star_index:
         get_resource("star_index", "threads")
     resources:
         mem_mb=get_resource("star_index", "mem_mb"),
-        walltime=get_resource("star_index", "walltime")
+        runtime=get_resource("star_index", "runtime")
     params:
         extra = ""
     log:
@@ -77,7 +77,7 @@ rule hisat2_index:
         get_resource("hisat2_index", "threads")
     resources:
         mem_mb=get_resource("hisat2_index", "mem_mb"),
-        walltime=get_resource("hisat2_index", "walltime")
+        runtime=get_resource("hisat2_index", "runtime")
     params:
         prefix=config["ref"]["hisat2"]["hisat2_index"] + "/hisat2_index"
     log:
