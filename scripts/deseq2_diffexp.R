@@ -4,8 +4,6 @@ sink(log, type = "message")
 
 suppressMessages(library("DESeq2"))
 suppressMessages(library("openxlsx"))
-suppressMessages(library("org.Hs.eg.db"))
-suppressMessages(library("AnnotationDbi"))
 
 ## PARALLELIZATION ##
 parallel <- FALSE
@@ -29,36 +27,16 @@ dds <- readRDS(dds)
 # Get results
 res <- results(dds, contrast = c(condition, levels), alpha=0.05, parallel = parallel)
 
-# Annotate the GeneSymbol and complete GeneName from the ENSEMBL Gene ID.
-ensg_res <- rownames(res)
-ensemblGene_DEA <- gsub("\\.[0-9]*$", "", ensg_res)
-
-ensg_symbol <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
-                                    column = "SYMBOL", keytype = "ENSEMBL"))
-colnames(ensg_symbol) <- "GeneSymbol"
-ensg_genename <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
-                                      column = "GENENAME", keytype = "ENSEMBL"))
-colnames(ensg_genename) <- "GeneName"
-annot <- merge(ensg_symbol, ensg_genename, by = "row.names", all = TRUE)
-rownames(res) <- ensemblGene_DEA
-res <- merge(as.data.frame(res), annot, by.x = "row.names", by.y = 1, all = TRUE)
-ENSG_res_list <- as.list(ensg_res)
-names(ENSG_res_list) <- ensemblGene_DEA
-rownames(res) <- ENSG_res_list[res$Row.names]
-col_order <- c("GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
-               "lfcSE", "stat", "pvalue", "padj")
-res <- res[, col_order]
-
 # Sort by adjusted p-value
-res <- res[order(res$padj, decreasing = FALSE), ]
+res_sort <- res[order(res$padj, decreasing = FALSE), ]
 
 # Save tsv
-write.table(res, file = snakemake@output[["tsv"]], sep = "\t", quote = FALSE, 
+write.table(res_sort, file = snakemake@output[["tsv"]], sep = "\t", quote = FALSE, 
             col.names = NA)
 
 # Add Name column
-res$EnsemblGeneID <- rownames(res)
-res <- res[c("EnsemblGeneID", colnames(res)[1:(ncol(res)-1)])]
+res_sort$Name <- rownames(res_sort)
+res_sort <- res_sort[c("Name", colnames(res_sort)[1:(ncol(res_sort)-1)])]
 
 # Green and red styles for formatting excel
 redStyle <- createStyle(fontColour = "#FF1F00", bgFill = "#F6F600")
@@ -84,18 +62,18 @@ addStyle(wb, sheet, cols = 1, rows = 3, style = boldStyle)
 invisible(sapply(1:3, function(i) mergeCells(wb, sheet, cols = 1:3, rows = i)))
 
 # Reorder genes according to adjusted p-value
-writeData(wb, sheet, res, startRow = 6)
-addStyle(wb, sheet, cols = 1:ncol(res), rows = 6, style = boldStyle, 
+writeData(wb, sheet, res_sort, startRow = 6)
+addStyle(wb, sheet, cols = 1:ncol(res_sort), rows = 6, style = boldStyle, 
          gridExpand = TRUE)
-conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7>0, $I7<0.05, NOT(ISBLANK($I7)))", style = redStyle)
-conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7>0, OR($I7>0.05, ISBLANK($I7)))", style = redPlainStyle)
-conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7<0, $I7<0.05, NOT(ISBLANK($I7)))", style = greenStyle)
-conditionalFormatting(wb, sheet, cols = 1:ncol(res), rows = 7:(nrow(res)+6),
-                      rule = "AND($E7<0, OR($I7>0.05, ISBLANK($I7)))", style = greenPlainStyle)
-setColWidths(wb, sheet, 1:ncol(res), widths = 13)
+conditionalFormatting(wb, sheet, cols = 1:ncol(res_sort), rows = 7:(nrow(res_sort)+6),
+                      rule = "AND($C7>0, $G7<0.05, NOT(ISBLANK($G7)))", style = redStyle)
+conditionalFormatting(wb, sheet, cols = 1:ncol(res_sort), rows = 7:(nrow(res_sort)+6),
+                      rule = "AND($C7>0, OR($G7>0.05, ISBLANK($G7)))", style = redPlainStyle)
+conditionalFormatting(wb, sheet, cols = 1:ncol(res_sort), rows = 7:(nrow(res_sort)+6),
+                      rule = "AND($C7<0, $G7<0.05, NOT(ISBLANK($G7)))", style = greenStyle)
+conditionalFormatting(wb, sheet, cols = 1:ncol(res_sort), rows = 7:(nrow(res_sort)+6),
+                      rule = "AND($C7<0, OR($G7>0.05, ISBLANK($G7)))", style = greenPlainStyle)
+setColWidths(wb, sheet, 1:ncol(res_sort), widths = 13)
 
 # Save excel
 saveWorkbook(wb, file = snakemake@output[["xlsx"]], overwrite = TRUE)
@@ -104,27 +82,7 @@ saveWorkbook(wb, file = snakemake@output[["xlsx"]], overwrite = TRUE)
 
 # GET SHRUNKEN LOG FOLD CHANGES.
 coef <- paste0(c(condition, levels[1], "vs", levels[2]), collapse = "_")
-res_shrink <- lfcShrink(dds, coef=coef, type="apeglm")
-
-# Annotate the GeneSymbol and complete GeneName from the ENSEMBL Gene ID.
-ensg_res <- rownames(res_shrink)
-ensemblGene_DEA <- gsub("\\.[0-9]*$", "", ensg_res)
-
-ensg_symbol <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
-                                    column = "SYMBOL", keytype = "ENSEMBL"))
-colnames(ensg_symbol) <- "GeneSymbol"
-ensg_genename <- as.data.frame(mapIds(org.Hs.eg.db, keys = ensemblGene_DEA,
-                                      column = "GENENAME", keytype = "ENSEMBL"))
-colnames(ensg_genename) <- "GeneName"
-annot <- merge(ensg_symbol, ensg_genename, by = "row.names", all = TRUE)
-rownames(res_shrink) <- ensemblGene_DEA
-res_shrink <- merge(as.data.frame(res_shrink), annot, by.x = "row.names", by.y = 1, all = TRUE)
-ENSG_res_list <- as.list(ensg_res)
-names(ENSG_res_list) <- ensemblGene_DEA
-rownames(res_shrink) <- ENSG_res_list[res_shrink$Row.names]
-col_order <- c("GeneSymbol", "GeneName", "baseMean", "log2FoldChange",
-               "lfcSE", "pvalue", "padj")
-res_shrink <- res_shrink[, col_order]
+res_shrink <- lfcShrink(dds, coef=coef, res = res, type="apeglm")
 
 # Sort by adjusted p-value
 res_shrink <- res_shrink[order(res_shrink$padj, decreasing = FALSE), ]
@@ -134,8 +92,8 @@ write.table(res_shrink, file = snakemake@output[["tsv_lfcShrink"]], sep = "\t", 
             col.names = NA)
 
 # Add Name column
-res_shrink$EnsemblGeneID <- rownames(res_shrink)
-res_shrink <- res_shrink[c("EnsemblGeneID", colnames(res_shrink)[1:(ncol(res_shrink)-1)])]
+res_shrink$Name <- rownames(res_shrink)
+res_shrink <- res_shrink[c("Name", colnames(res_shrink)[1:(ncol(res_shrink)-1)])]
 
 # Green and red styles for formatting excel
 redStyle <- createStyle(fontColour = "#FF1F00", bgFill = "#F6F600")
@@ -165,13 +123,13 @@ writeData(wb, sheet, res_shrink, startRow = 6)
 addStyle(wb, sheet, cols = 1:ncol(res_shrink), rows = 6, style = boldStyle, 
          gridExpand = TRUE)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7>0, $H7<0.05, NOT(ISBLANK($H7)))", style = redStyle)
+                      rule = "AND($C7>0, $F7<0.05, NOT(ISBLANK($F7)))", style = redStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7>0, OR($H7>0.05, ISBLANK($H7)))", style = redPlainStyle)
+                      rule = "AND($C7>0, OR($F7>0.05, ISBLANK($F7)))", style = redPlainStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7<0, $H7<0.05, NOT(ISBLANK($H7)))", style = greenStyle)
+                      rule = "AND($C7<0, $F7<0.05, NOT(ISBLANK($F7)))", style = greenStyle)
 conditionalFormatting(wb, sheet, cols = 1:ncol(res_shrink), rows = 7:(nrow(res_shrink)+6),
-                      rule = "AND($E7<0, OR($H7>0.05, ISBLANK($H7)))", style = greenPlainStyle)
+                      rule = "AND($C7<0, OR($F7>0.05, ISBLANK($F7)))", style = greenPlainStyle)
 setColWidths(wb, sheet, 1:ncol(res_shrink), widths = 13)
 
 # Save excel

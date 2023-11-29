@@ -38,14 +38,14 @@ rule htseq_count:
         walltime=get_resource('htseq_count', 'walltime')
     params:
         annotation= lambda x: config['ref'][chosen_aligner]['annotation'] if chosen_aligner != 'salmon' else '',
-        extra='-f bam -r pos',
+        extra=config['parameters']['htseq-count']['extra'],
         mode = config['parameters']['htseq-count']['mode'],
         strandedness = config['parameters']['htseq-count']['strandedness']
     log:
         f"{LOGDIR}/htseq_count/{{sample}}.log"
     conda:
         '../envs/cuantification.yaml'
-    shell: 'htseq-count {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant} 2> {log}'
+    shell: 'htseq-count -f bam -r pos {params.extra} {params.mode} {params.strandedness} {input.bam_file} {params.annotation} > {output.quant} 2> {log}'
 
 
 rule htseq_count_matrix:

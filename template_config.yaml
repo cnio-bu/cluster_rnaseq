@@ -83,14 +83,26 @@ parameters:
     multiqc: "--config res/config/multiqc_config.yaml"
 
     htseq-count:
+        # Extra parameters for htseq-count are available in the documentation: 
+        # https://htseq.readthedocs.io/en/release_0.11.1/count.html
+        # A recommended extra parameter is '-i', which indicates the GTF attribute 
+        # to be used as feature ID to identify the counts in the output table.
+        # e.g. "-i 'gene_id'" for ENSEMBL gene IDs or "-i 'gene_name'" for gene SYMBOL
+        extra: "-i 'gene_id'"
         # Mode: "union", "intersection-strict" or "intersection-nonempty" (default: union)
         mode: "-m union"
         # Strandness: "yes", "no" or "reverse" (default: yes)
         strandedness: "-s yes"
 
     featureCounts:
-        # Feature type sets to gene by default because it seems that improve the results
-        extra: "-t 'gene'"
+        # Extra parameters for featureCounts are available in the documentation:
+        # https://bioconductor.org/packages/release/bioc/vignettes/Rsubread/inst/doc/SubreadUsersGuide.pdf
+        # Feature type ('-t') sets to gene by default for read counting because it 
+        # seems that improve the results. e.g. "-t 'gene' or "-t 'exon'"
+        # Attribute type ('-g') is used to group features (eg. exons or genes) into 
+        # meta-features (eg. genes) when GTF annotation is provided.
+        # e.g. "-g 'gene id'" for ENSEMBL gene IDs or "-g 'gene_name'" for gene SYMBOL
+        extra: "-t 'gene' -g 'gene_id'"
         # Strandness: 0 = "unstranded", 1 = "stranded", 2 = "reversely stranded" (default: 0)
         strandedness: "-s 1"
 

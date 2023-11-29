@@ -105,11 +105,13 @@ properties:
             htseq-count:
                 type: object
                 properties:
+                    extra:
+                        type: string
                     mode:
                         type: string
                     strandedness:
                         type: string
-            
+
             featureCounts:
                 type: object
                 properties:
