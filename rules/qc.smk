@@ -99,7 +99,7 @@ rule fastqc_files:
         flag=f"{LOGDIR}/md5.checked"
     output:
         html=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.html",
-        zip_qc=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.zip"
+        zip=f"{OUTDIR}/qc/fastqc_files/{{sample}}_{{lane}}_fq{{read}}_fastqc.zip"
     threads: 
         get_resource("fastqc","threads")
     resources:
@@ -196,7 +196,7 @@ rule fastqc_concat:
         f"{OUTDIR}/trimmed/{{sample}}/{{sample}}_R{{read}}.fastq.gz"
     output:
         html=f"{OUTDIR}/qc/fastqc_concat/{{sample}}_R{{read}}_fastqc.html",
-        zip_qc=f"{OUTDIR}/qc/fastqc_concat/{{sample}}_R{{read}}_fastqc.zip"
+        zip=f"{OUTDIR}/qc/fastqc_concat/{{sample}}_R{{read}}_fastqc.zip"
     threads: 
         get_resource("fastqc","threads")
     resources:
