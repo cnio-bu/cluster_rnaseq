@@ -5,6 +5,7 @@ rule deseq2_init:
         dds = f"{OUTDIR}/deseq2/{deseq_path}/dds.rds",
         normalized_counts = f"{OUTDIR}/deseq2/{deseq_path}/normalizedcounts.tsv",
         vst = expand(f"{OUTDIR}/deseq2/{deseq_path}/dds_vst{{fsuffix}}.rds", fsuffix = filesuffix)
+        vst_table = f"{OUTDIR}/deseq2/{deseq_path}/vst_counts.tsv"
     threads:
         get_resource("deseq2_init", "threads")
     resources:

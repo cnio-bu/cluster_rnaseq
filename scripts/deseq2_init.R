@@ -79,6 +79,8 @@ saveRDS(dds, file = snakemake@output[["dds"]])
 write.table(norm_counts, file = snakemake@output[["normalized_counts"]], 
             sep = "\t", quote = FALSE, col.names = NA)
 saveRDS(vsd, file = snakemake@output[["vst"]][1])
+write.table(assay(vsd), file = snakemake@output[["vst_table"]], 
+            sep = "\t", quote = FALSE, col.names = NA)
 
 # If there is a batch, perform batch correction
 if (!is.null(batch_variables)) {
